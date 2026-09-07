@@ -533,6 +533,20 @@ ul,ol{margin:0;padding:0;list-style:none}
             transition: transform .55s cubic-bezier(.22,1,.36,1), opacity .35s ease;
         }
         .tile:hover .tile-mark { transform: rotate(-12deg) scale(1.12); opacity: .2; }
+        .tile.is-soon { cursor: default; opacity: .62; }
+        .tile.is-soon:hover { transform: none; border-color: var(--hairline); }
+        .tile.is-soon:hover::before { opacity: 0; }
+        .tile.is-soon:hover .tile-name { color: #0f172a; }
+        .tile.is-soon:hover .tile-mark { opacity: .18; transform: none; }
+        .tile-soon {
+            position: absolute; right: 1.4rem; bottom: 1.4rem;
+            padding: .38rem .75rem; border-radius: 9999px;
+            border: 1px solid var(--hairline); background: #f8fafc; color: #94a3b8;
+            font-size: .55rem; font-weight: 900; letter-spacing: .16em;
+        }
+        [data-theme="dark"] .tile.is-soon:hover .tile-name { color: #e2e8f0; }
+        [data-theme="dark"] .tile-soon { background: #111113; border-color: #2b2b2f; color: #52525b; }
+
         .tile-arrow {
             position: absolute; right: 1.4rem; top: 1.4rem;
             width: 2.4rem; height: 2.4rem; border-radius: 9999px;
@@ -2002,7 +2016,7 @@ ul,ol{margin:0;padding:0;list-style:none}
                 </span>
             </button>
 
-            <button class="tile is-wide" style="--tone:#0f766e" onclick="switchView('brand')">
+            <button class="tile is-wide is-soon" style="--tone:#0f766e" disabled aria-disabled="true">
                 <span class="tile-num">06</span>
                 <span class="tile-body">
                     <span class="tile-name" data-i18n="brand_title">Brendinq Bələdçisi</span>
@@ -2011,9 +2025,7 @@ ul,ol{margin:0;padding:0;list-style:none}
                 <svg class="tile-mark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4">
                     <rect x="16" y="14" width="68" height="72" rx="6"/><path d="M16 38h68M40 38v48" stroke-linecap="round"/>
                 </svg>
-                <span class="tile-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                </span>
+                <span class="tile-soon" data-i18n="soon_tag">TEZLİKLƏ</span>
             </button>
         </section>
 
@@ -3113,8 +3125,8 @@ ul,ol{margin:0;padding:0;list-style:none}
                 home_subtitle: "Palette generator, focal point analysis, contrast and typography checks — back up every visual decision in seconds.",
                 card_focal: "Focal Point Analyzer",
                 card_color: "Color Hierarchy",
-                hero_l1: "WHAT DO THEY",
-                hero_l2: "SEE FIRST?",
+                hero_l1: "WHAT IS SEEN",
+                hero_l2: "FIRST?",
                 hero_l3: "LET'S FIND OUT<span class=\"hero-bang\">!</span>",
                 soon_tag: "SOON",
                 tool1_desc: "Find the attention centers in your image with a heatmap.",
@@ -3564,9 +3576,9 @@ ul,ol{margin:0;padding:0;list-style:none}
                 home_subtitle: "Генератор палитр, анализ фокусных точек, контраст и типографика — обоснуйте любое визуальное решение за секунды.",
                 card_focal: "Анализатор фокусных точек",
                 card_color: "Иерархия цвета",
-                hero_l1: "ЧТО ЗАМЕТНО",
+                hero_l1: "ЧТО ВИДНО",
                 hero_l2: "ПЕРВЫМ?",
-                hero_l3: "ДАВАЙ ПРОВЕРИМ<span class=\"hero-bang\">!</span>",
+                hero_l3: "ДАВАЙТЕ ПРОВЕРИМ<span class=\"hero-bang\">!</span>",
                 soon_tag: "СКОРО",
                 tool1_desc: "Найдите центры внимания на изображении с помощью тепловой карты.",
                 tool2_desc: "Соберите палитру, измерьте контраст, посмотрите её в дизайне.",
@@ -4014,6 +4026,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 
         // --- QLOBAL DƏYİŞƏNLƏR ---
         let currentLang = 'az';
+        var themeChoice = 'light';   // istifadəçinin mövzu seçimi (rəng səhifəsindən asılı deyil)
         let selectedAlgo = 'itti';
         let centerBiasOn = true;
         let globalStats = null;
@@ -4107,6 +4120,8 @@ ul,ol{margin:0;padding:0;list-style:none}
             if (viewId === 'print') renderPrint();
 
             document.getElementById(viewId + '-view').classList.remove('hidden');
+            // mövzunu yenidən tətbiq et — rəng səhifəsi tünd rejimdən kənarda qalır
+            if (typeof applyTheme === 'function') applyTheme(themeChoice);
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             if (viewId === 'focal-point') {
@@ -7459,7 +7474,7 @@ ul,ol{margin:0;padding:0;list-style:none}
                 ['focal-point', t.card_focal, false],
                 ['color-hierarchy', t.card_color, false],
                 ['type', t.type_title, false],
-                ['brand', t.brand_title, false],
+                ['', t.brand_title, true],
                 ['print', t.print_title, false],
                 ['logo', t.logo_title, false]
             ];
@@ -7515,7 +7530,11 @@ ul,ol{margin:0;padding:0;list-style:none}
         const MOON_ICON = '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>';
 
         function applyTheme(mode) {
-            document.documentElement.setAttribute('data-theme', mode);
+            themeChoice = mode;
+            // Rəng İyerarxiyası səhifəsi öz tünd fonunda qurulub —
+            // qlobal tünd rejim ora tətbiq olunmur, yoxsa mətnlər ağ üstündə ağ qalır.
+            const onColor = !document.getElementById('color-hierarchy-view').classList.contains('hidden');
+            document.documentElement.setAttribute('data-theme', onColor ? 'light' : mode);
             document.querySelectorAll('.theme-btn').forEach(b => {
                 b.innerHTML = mode === 'dark' ? SUN_ICON : MOON_ICON;
                 b.title = mode === 'dark' ? translations[currentLang].theme_light : translations[currentLang].theme_dark;
@@ -7525,7 +7544,7 @@ ul,ol{margin:0;padding:0;list-style:none}
         }
 
         function toggleTheme() {
-            const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            const next = themeChoice === 'dark' ? 'light' : 'dark';
             applyTheme(next);
             try { normalizeStore(); store.theme = next; storeSave(); } catch (e) {}
         }
