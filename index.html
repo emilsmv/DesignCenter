@@ -605,6 +605,11 @@ ul,ol{margin:0;padding:0;list-style:none}
         }
         .pcol-detail > div { overflow: hidden; min-height: 0; }
         .pcol-actions { opacity: .75; transition: opacity .3s ease; }
+        /* iki qrupu ayıran incə xətt: məlumat düymələri | idarəetmə düymələri */
+        .pcol-sep {
+            flex: 0 0 auto; width: 1px; height: 1.15rem;
+            margin: 0 .3rem; background: currentColor; opacity: .28;
+        }
         .pcol-btn {
             padding: .625rem;
             border-radius: 9999px;
@@ -656,14 +661,51 @@ ul,ol{margin:0;padding:0;list-style:none}
         }
         .pdetails > div { overflow: hidden; min-height: 0; }
         .pdetails.is-open { grid-template-rows: 1fr; opacity: 1; }
+        /* «Kodlar» rejimi: hər sütunda kodlar daim açıq qalır */
+        .show-codes .pdetails[id^="details-"] { grid-template-rows: 1fr; opacity: 1; }
+        .show-codes .pcol.dense .pdetails[id^="details-"] { opacity: .95; }
+        /* sütun çox darsa kodlar avtomatik gizlənir — oxunmaz mətn göstərməmək üçün */
+        @media (max-width: 720px) {
+            .show-codes .pdetails[id^="details-"] { grid-template-rows: 0fr; opacity: 0; }
+        }
+        .codes-btn {
+            display: inline-flex; align-items: center; gap: .4rem; height: 2.5rem;
+            padding: 0 .85rem; border-radius: 9999px; cursor: pointer;
+            border: 1px solid rgba(255,255,255,.28); background: rgba(255,255,255,.12);
+            color: #fff; font-size: .7rem; font-weight: 800; backdrop-filter: blur(6px);
+            transition: all .2s ease;
+        }
+        .codes-btn svg { width: .9rem; height: .9rem; }
+        .codes-btn:hover { background: rgba(255,255,255,.22); }
+        .codes-btn.is-on { background: #fff; color: #0f172a; border-color: #fff; }
         .pdetails-card {
             border-radius: .9rem;
             padding: .35rem;
             /* kənar kölgə açılış animasiyasında kəsildiyi üçün daxili haşiyə */
             box-shadow: inset 0 0 0 1px rgba(127, 127, 127, .18);
         }
-        .pd-light { background: #ffffff; color: #0f172a; }
-        .pd-dark { background: #0f172a; color: #f8fafc; }
+        /* Panel həmişə eyni görünür: tünd şüşə effekti.
+           Hər fon rəngində ağ mətnin kontrastı 7:1-dən yuxarıdır. */
+        .pd-light, .pd-dark {
+            background: rgba(13, 18, 32, .80);
+            color: #f8fafc;
+            backdrop-filter: blur(14px) saturate(140%);
+            -webkit-backdrop-filter: blur(14px) saturate(140%);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), 0 14px 34px rgba(0,0,0,.28);
+        }
+        @supports not (backdrop-filter: blur(4px)) {
+            .pd-light, .pd-dark { background: rgba(13, 18, 32, .93); }
+        }
+        /* sətirdəki kopyalama ikonu — yalnız üzərinə gələndə */
+        .pd-row::after {
+            content: '';
+            width: .78rem; height: .78rem; flex: 0 0 auto; margin-left: .35rem;
+            background: currentColor; opacity: 0;
+            transition: opacity .18s ease;
+            -webkit-mask: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><rect x='9' y='9' width='11' height='11' rx='2'/><path d='M5 15V5a2 2 0 012-2h10'/></svg>");
+            mask: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><rect x='9' y='9' width='11' height='11' rx='2'/><path d='M5 15V5a2 2 0 012-2h10'/></svg>");
+        }
+        .pd-row:hover::after { opacity: .7; }
         .pd-row {
             display: flex; align-items: center; gap: .55rem; width: 100%;
             padding: .42rem .6rem; border: 0; border-radius: .6rem;
@@ -680,11 +722,35 @@ ul,ol{margin:0;padding:0;list-style:none}
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .pd-note { font-size: .55rem; font-weight: 600; opacity: .45; }
-        .pd-ico { flex: 0 0 auto; opacity: 0; transition: opacity .18s ease; }
-        .pd-row:hover .pd-ico { opacity: .55; }
         .pd-title { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .45rem .65rem .3rem; }
         .pd-title span:first-child { font-size: .56rem; font-weight: 800; letter-spacing: .13em; opacity: .5; }
         .pd-title span:last-child { font-size: .58rem; font-weight: 700; opacity: .75; }
+        .hex-line { position: relative; display: inline-flex; align-items: center; gap: .45rem; }
+        .pcol-hex {
+            outline: none; cursor: text; border-radius: .3rem;
+            transition: opacity .18s ease;
+        }
+        .pcol-hex.is-editing { opacity: .96; }
+        /* səhv kodda yalnız yazı sönür — çərçivə yoxdur */
+        .pcol-hex.is-bad { opacity: .45; }
+        .hex-warn {
+            display: none; align-items: center; justify-content: center;
+            width: 1.15rem; height: 1.15rem; flex: 0 0 auto;
+            animation: hexPop .25s cubic-bezier(.34,1.5,.6,1);
+        }
+        .hex-warn svg { width: 100%; height: 100%; }
+        .hex-line.is-bad .hex-warn { display: inline-flex; }
+        .hex-line.is-bad .hex-copy { display: none; }
+        @keyframes hexPop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .hex-copy {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 1.5rem; height: 1.5rem; flex: 0 0 auto;
+            border: 0; background: none; cursor: pointer; padding: 0;
+            opacity: 0; transition: opacity .2s ease, transform .2s ease;
+        }
+        .hex-copy svg { width: .95rem; height: .95rem; }
+        .pcol:hover .hex-copy { opacity: .5; }
+        .hex-copy:hover { opacity: 1 !important; transform: scale(1.12); }
         .pd-swatches { display: flex; gap: .3rem; padding: 0 .55rem; }
         .pd-sw {
             position: relative;
@@ -693,7 +759,7 @@ ul,ol{margin:0;padding:0;list-style:none}
             box-shadow: inset 0 0 0 1px rgba(127, 127, 127, .22);
             transition: transform .18s ease, box-shadow .18s ease;
         }
-        .pd-sw:hover { transform: translateY(-3px); box-shadow: inset 0 0 0 1px rgba(127,127,127,.22), 0 6px 14px rgba(0,0,0,.22); }
+        .pd-sw:hover { transform: translateY(-3px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35), 0 6px 14px rgba(0,0,0,.32); }
         .pd-sw.is-current::after {
             content: ''; position: absolute; inset: auto 0 -.45rem 0; margin: 0 auto;
             width: .3rem; height: .3rem; border-radius: 9999px; background: currentColor; opacity: .6;
@@ -707,6 +773,9 @@ ul,ol{margin:0;padding:0;list-style:none}
             font-size: .68rem; font-weight: 600; opacity: .7; min-height: 1.1rem;
         }
         .pcol-actions { flex-wrap: wrap; justify-content: center; }
+        /* dar sütunda düymələr sətirlərə bölünür — ayırıcı mənasını itirir */
+        #paletteContainer.dense .pcol-sep { display: none; }
+        @media (max-width: 900px) { .pcol-sep { display: none; } }
         @media (min-width: 768px) {
             #paletteContainer.dense .pcol { padding-left: 1.1rem; padding-right: 1.1rem; }
         }
@@ -2053,6 +2122,10 @@ ul,ol{margin:0;padding:0;list-style:none}
                  </button>
              </div>
 
+             <button id="codesToggle" class="codes-btn pointer-events-auto" onclick="toggleAlwaysCodes()">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+                 <span data-i18n="codes_show">Kodlar</span>
+             </button>
              <div class="lang-group shrink-0 pointer-events-auto" style="background:rgba(255,255,255,.92)">
                  <button class="lang-btn is-on" data-lang="az">AZ</button>
                  <button class="lang-btn" data-lang="en">EN</button>
@@ -2733,6 +2806,10 @@ ul,ol{margin:0;padding:0;list-style:none}
                 algo_std_desc: "Itti–Koch modelinə mərkəz meyli (Tatler 2007) əlavə olunur. İnsanlar şəklə baxarkən fiksasiyalar statistik olaraq mərkəzə toplaşır — foto və reklam üçün real nəticə verir.",
                 algo_dyn_desc: "Yalnız aşağıdan-yuxarı (bottom-up) saliency — mərkəz meyli tətbiq edilmir. Poster və asimmetrik kompozisiyalarda əsl kontrast mənbələrini göstərir.",
                 method_note: "Metod: Itti–Koch–Niebur (1998) saliency modeli — çoxmiqyaslı mərkəz-ətraf fərqləri (intensivlik, rəng oponentliyi, oriyentasiya), üz proxy-si və mərkəz meyli. Fiksasiyalar winner-take-all + inhibition of return ilə seçilir.",
+                codes_show: "Kodlar",
+                hex_invalid: "Yararsız HEX kodu",
+                hex_edit_hint: "Dəyişmək üçün klikləyin",
+                hex_applied: "palitraya tətbiq olundu",
                 ty_health: "Tipoqrafiya sağlamlığı",
                 wc_sub: "Veb məzmununun əlçatanlıq təlimatları",
                 wc_lead: "WCAG — Beynəlxalq Veb Konsorsiumunun (W3C) hazırladığı standartdır. Mətnin, rənglərin və interfeysin hər kəs üçün — o cümlədən zəif görən, rəng ayırd etməkdə çətinlik çəkən və ya yaşlı istifadəçilər üçün — oxunaqlı olmasını təmin edir. Bir çox ölkədə dövlət və korporativ saytlar üçün hüquqi tələbdir.",
@@ -3184,6 +3261,10 @@ ul,ol{margin:0;padding:0;list-style:none}
                 algo_std_desc: "Itti–Koch model plus the central fixation bias (Tatler 2007). When people look at a picture, fixations statistically cluster near the centre — realistic for photos and ads.",
                 algo_dyn_desc: "Pure bottom-up saliency with no centre bias. Reveals the real contrast sources in posters and asymmetric compositions.",
                 method_note: "Method: Itti–Koch–Niebur (1998) saliency model — multi-scale centre–surround differences (intensity, colour opponency, orientation), a face proxy and the central bias. Fixations are picked by winner-take-all with inhibition of return.",
+                codes_show: "Codes",
+                hex_invalid: "Invalid HEX code",
+                hex_edit_hint: "Click to edit",
+                hex_applied: "applied to the palette",
                 ty_health: "Typographic health",
                 wc_sub: "Web Content Accessibility Guidelines",
                 wc_lead: "WCAG is a standard published by the World Wide Web Consortium (W3C). It ensures that text, colour and interface remain readable for everyone — including people with low vision, colour vision deficiency, or simply older eyes. In many countries it is a legal requirement for public and corporate websites.",
@@ -3635,6 +3716,10 @@ ul,ol{margin:0;padding:0;list-style:none}
                 algo_std_desc: "Модель Itti–Koch плюс центральное смещение фиксаций (Tatler 2007). При просмотре изображения взгляд статистически тяготеет к центру — реалистично для фото и рекламы.",
                 algo_dyn_desc: "Чистая восходящая заметность без центрального смещения. Показывает настоящие источники контраста в постерах и асимметричных композициях.",
                 method_note: "Метод: модель Itti–Koch–Niebur (1998) — многомасштабные разности центр–окружение (яркость, цветовая оппонентность, ориентация), прокси лиц и центральное смещение. Фиксации выбираются winner-take-all с торможением возврата.",
+                codes_show: "Коды",
+                hex_invalid: "Некорректный HEX-код",
+                hex_edit_hint: "Нажмите, чтобы изменить",
+                hex_applied: "применён к палитре",
                 ty_health: "Здоровье типографики",
                 wc_sub: "Руководство по доступности веб-контента",
                 wc_lead: "WCAG — стандарт, разработанный консорциумом W3C. Он обеспечивает читаемость текста, цвета и интерфейса для всех, включая людей со слабым зрением, нарушением цветовосприятия и пожилых пользователей. Во многих странах это законодательное требование для государственных и корпоративных сайтов.",
@@ -5605,6 +5690,86 @@ ul,ol{margin:0;padding:0;list-style:none}
             return `${Math.round(c * 100)}%, ${Math.round(m * 100)}%, ${Math.round(y * 100)}%, ${Math.round(k * 100)}%`;
         }
 
+        // ---- HEX kodunu birbaşa redaktə etmək ----
+        function hexNormalize(raw) {
+            let v = String(raw).replace(/[^0-9a-fA-F]/g, '').toUpperCase();
+            if (v.length === 3) v = v[0] + v[0] + v[1] + v[1] + v[2] + v[2];
+            return v.length === 6 ? '#' + v : null;
+        }
+
+        window.hexEditFocus = function(e) {
+            const el = e.currentTarget;
+            el.dataset.hex = el.textContent.trim();
+            el.classList.add('is-editing');
+            try {
+                const r = document.createRange(), sel = window.getSelection();
+                r.selectNodeContents(el); sel.removeAllRanges(); sel.addRange(r);
+            } catch (err) {}
+        };
+
+        window.hexEditInput = function(e) {
+            const el = e.currentTarget;
+            const raw = el.textContent;
+            // yalnız # və hex simvolları, maksimum 7 işarə
+            const clean = raw.replace(/[^#0-9a-fA-F]/g, '').replace(/#/g, '').slice(0, 6);
+            const want = '#' + clean.toUpperCase();
+            if (raw !== want) {
+                el.textContent = want;
+                try {
+                    const r = document.createRange(), sel = window.getSelection();
+                    r.selectNodeContents(el); r.collapse(false);
+                    sel.removeAllRanges(); sel.addRange(r);
+                } catch (err) {}
+            }
+            const bad = !hexNormalize(want);
+            el.classList.toggle('is-bad', bad);
+            const line = el.closest('.hex-line');
+            if (line) line.classList.toggle('is-bad', bad);
+        };
+
+        window.hexEditKey = function(e) {
+            const el = e.currentTarget;
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                // səhv kod qəbul edilmir — köhnə koda qayıdır
+                if (!hexNormalize(el.textContent)) {
+                    el.textContent = el.dataset.hex;
+                    el.classList.remove('is-bad');
+                    const line = el.closest('.hex-line');
+                    if (line) line.classList.remove('is-bad');
+                }
+                el.blur();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                el.textContent = el.dataset.hex;
+                el.blur();
+            }
+        };
+
+        window.hexEditCommit = function(e) {
+            const el = e.currentTarget;
+            el.classList.remove('is-editing', 'is-bad');
+            const line0 = el.closest('.hex-line');
+            if (line0) line0.classList.remove('is-bad');
+            const idx = +el.dataset.idx;
+            const prev = el.dataset.hex;
+            const next = hexNormalize(el.textContent);
+
+            if (!next) { el.textContent = prev; return; }
+            if (next === prev.toUpperCase()) { el.textContent = prev; return; }
+            if (!currentHexes.length || !currentPaletteMeta) { el.textContent = prev; return; }
+
+            currentHexes[idx] = next;
+            while (lockedColors.length < currentHexes.length) lockedColors.push(null);
+            lockedColors[idx] = {
+                hex: next,
+                name: colorName(next, currentLang),
+                pantone: nearestPantone(next)
+            };
+            renderPalette(buildPaletteData(currentPaletteMeta, currentHexes));
+            toastMsg(`<span class="font-bold">${next}</span> — ${translations[currentLang].hex_applied}`);
+        };
+
         window.addSavedToPalette = function(hex, event) {
             if (event) event.stopPropagation();
             const t = translations[currentLang];
@@ -5704,6 +5869,23 @@ ul,ol{margin:0;padding:0;list-style:none}
             try { normalizeStore(); store.colors = savedColors.slice(); storeSave(); } catch (e) {}
         };
 
+        // Rəng kodlarını daim göstərmək rejimi
+        let alwaysCodes = false;
+        try { alwaysCodes = localStorage.getItem('rdm_always_codes') === '1'; } catch (e) {}
+
+        window.toggleAlwaysCodes = function() {
+            alwaysCodes = !alwaysCodes;
+            try { localStorage.setItem('rdm_always_codes', alwaysCodes ? '1' : '0'); } catch (e) {}
+            applyAlwaysCodes();
+        };
+
+        function applyAlwaysCodes() {
+            const box = document.getElementById('paletteContainer');
+            if (box) box.classList.toggle('show-codes', alwaysCodes);
+            const btn = document.getElementById('codesToggle');
+            if (btn) btn.classList.toggle('is-on', alwaysCodes);
+        }
+
         window.closeColumnPanels = function(index) {
             ['details', 'temp', 'sat'].forEach(k => {
                 const el = document.getElementById(`${k}-${index}`);
@@ -5769,6 +5951,7 @@ ul,ol{margin:0;padding:0;list-style:none}
         function renderPalette(paletteData) {
             if (!paletteData) return;
             currentRenderedPalette = paletteData;
+            setTimeout(applyAlwaysCodes, 0);
             const container = document.getElementById('paletteContainer');
             document.getElementById('paletteTheme').innerText = paletteData.theme;
             document.getElementById('paletteMood').innerText = paletteData.mood;
@@ -5816,7 +5999,7 @@ ul,ol{margin:0;padding:0;list-style:none}
                 const cta = suggestCTA(color.hex);
                 const copyPath = `<path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>`;
                 const chipCopy = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">${copyPath}</svg>`;
-                const rowCopy = `<svg class="pd-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">${copyPath}</svg>`;
+                const rowCopy = '';   // ikon artıq yalnız CSS ilə, sətir üzərinə gələndə görünür
 
                 const ralCode = nearestRAL(color.hex);
                 const cardTone = useWhite ? 'pd-light' : 'pd-dark';
@@ -5833,8 +6016,6 @@ ul,ol{margin:0;padding:0;list-style:none}
                 const satList = satRamp(color.hex);
                 const satCurrentIdx = SAT_STEPS
                     .reduce((best, v, i, arr) => Math.abs(v - curSat) < Math.abs(arr[best] - curSat) ? i : best, 0);
-
-                const copyIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>`;
                 const detailsIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path></svg>`;
                 const removeBtn = paletteData.colors.length > 2
                     ? `<button onclick="removePaletteColor(${index}, event)" class="pcol-btn ${badgeBg} ${textColor}" title="${t.remove_color}"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"></path></svg></button>`
@@ -5881,14 +6062,28 @@ ul,ol{margin:0;padding:0;list-style:none}
                     </div>
 
                     <div class="flex flex-col items-center mt-auto w-full relative z-10 pb-2 md:pb-8">
-                        <h3 class="pcol-hex text-3xl lg:text-4xl font-black uppercase tracking-widest ${textColor} ${glow} mb-4 cursor-pointer" title="${t.copy_btn}" onclick="event.stopPropagation(); copyToClipboard('${color.hex}')">${color.hex}</h3>
+                        <div class="hex-line mb-4">
+                            <h3 class="pcol-hex text-3xl lg:text-4xl font-black uppercase tracking-widest ${textColor} ${glow}"
+                                contenteditable="true" spellcheck="false" translate="no"
+                                data-idx="${index}" data-hex="${color.hex}"
+                                title="${t.hex_edit_hint}"
+                                onclick="event.stopPropagation()"
+                                onfocus="hexEditFocus(event)"
+                                onblur="hexEditCommit(event)"
+                                onkeydown="hexEditKey(event)"
+                                oninput="hexEditInput(event)">${color.hex}</h3>
+                            <span class="hex-warn ${textColor}" title="${t.hex_invalid}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 8v5M12 17v.01"/><circle cx="12" cy="12" r="9"/></svg>
+                            </span>
+                            <button class="hex-copy ${textColor}" title="${t.copy_btn}"
+                                onclick="event.stopPropagation(); copyToClipboard('${color.hex}')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>
+                            </button>
+                        </div>
 
                         <div id="details-${index}" class="pdetails">
                             <div>
                                 <div class="pdetails-card ${useWhite ? 'pd-light' : 'pd-dark'}">
-                                    <button class="pd-row" title="HEX ${t.copy_word}" onclick="event.stopPropagation(); copyToClipboard('${color.hex}')">
-                                        <span class="pd-key">HEX</span><span class="pd-val">${color.hex}</span>${rowCopy}
-                                    </button>
                                     <button class="pd-row" title="RGB ${t.copy_word}" onclick="event.stopPropagation(); copyToClipboard('${rgbValue}')">
                                         <span class="pd-key">RGB</span><span class="pd-val">${rgbValue}</span>${rowCopy}
                                     </button>
@@ -5928,9 +6123,6 @@ ul,ol{margin:0;padding:0;list-style:none}
                         </div>
 
                         <div class="pcol-actions flex items-center gap-2 lg:gap-3">
-                            <button onclick="event.stopPropagation(); copyToClipboard('${color.hex}')" class="pcol-btn ${badgeBg} ${textColor}" title="${t.copy_btn}">
-                                ${copyIcon}
-                            </button>
                             <button onclick="toggleColorDetails(${index}, event)" class="pcol-btn ${badgeBg} ${textColor}" title="${t.details_hint}">
                                 ${detailsIcon}
                             </button>
@@ -5940,6 +6132,9 @@ ul,ol{margin:0;padding:0;list-style:none}
                             <button onclick="togglePanel(${index}, 'sat', event)" class="pcol-btn ${badgeBg} ${textColor}" title="${t.sat_hint}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3.5c3.5 4 6 6.8 6 9.6a6 6 0 11-12 0c0-2.8 2.5-5.6 6-9.6z"></path></svg>
                             </button>
+
+                            <span class="pcol-sep ${textColor}" aria-hidden="true"></span>
+
                             <button onclick="toggleColorLock(${index}, '${color.hex}', '${safeName}', '${safePantone}', event)" class="pcol-btn ${lockBtnClass}" title="${isLocked ? t.unlock_hint : t.lock_hint}">
                                 ${lockIcon}
                             </button>
