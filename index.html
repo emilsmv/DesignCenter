@@ -586,7 +586,12 @@ ul,ol{margin:0;padding:0;list-style:none}
             min-height: 55vh;
             contain: layout paint style;
             transition: flex-grow .55s cubic-bezier(.22, 1, .36, 1);
+            /* Sütun enləri kəsr piksel olur; aralarında yarım piksellik boşluq
+               qalır və arxadakı tünd fon nazik xətt kimi görünür.
+               Hər sütunu 1 px sola uzadıb tikişi tam örtürük. */
+            margin-left: -1px;
         }
+        .pcol:first-child { margin-left: 0; }
         .pcol-title {
             word-break: normal;
             overflow-wrap: break-word;
@@ -743,14 +748,22 @@ ul,ol{margin:0;padding:0;list-style:none}
         .hex-line.is-bad .hex-copy { display: none; }
         @keyframes hexPop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .hex-copy {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 1.5rem; height: 1.5rem; flex: 0 0 auto;
-            border: 0; background: none; cursor: pointer; padding: 0;
-            opacity: 0; transition: opacity .2s ease, transform .2s ease;
+            position: relative; display: inline-flex; align-items: center; justify-content: center;
+            width: 1.9rem; height: 1.9rem; flex: 0 0 auto;
+            border: 0; border-radius: 9999px; background: none; cursor: pointer; padding: 0;
+            opacity: 0; transition: opacity .2s ease, transform .2s ease, background-color .2s ease;
         }
+        .hex-copy:hover { background: rgba(127,127,127,.18); }
+        .hex-copy .hc-ok { position: absolute; opacity: 0; transform: scale(.5); transition: all .2s ease; }
+        .hex-copy.is-copied .hc-main, .hex-copy.is-copied svg:not(.hc-ok) { opacity: 0; }
+        .hex-copy.is-copied .hc-ok { opacity: 1; transform: scale(1); }
+        .hex-copy.is-copied { background: rgba(16,185,129,.28); opacity: 1 !important; }
+        .hex-copy.is-failed { background: rgba(244,63,94,.3); opacity: 1 !important; }
         .hex-copy svg { width: .95rem; height: .95rem; }
-        .pcol:hover .hex-copy { opacity: .5; }
-        .hex-copy:hover { opacity: 1 !important; transform: scale(1.12); }
+        .hex-copy.is-figma svg { width: .88rem; height: .88rem; }
+        .pcol:hover .hex-copy { opacity: .55; }
+        .hex-copy:hover { opacity: 1 !important; transform: scale(1.14); }
+        @media (hover: none) { .hex-copy { opacity: .55; } }
         .pd-swatches { display: flex; gap: .3rem; padding: 0 .55rem; }
         .pd-sw {
             position: relative;
@@ -809,7 +822,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 
         /* Sürükləyərək yerdəyişmə */
         .pcol { cursor: grab; -webkit-user-select: none; user-select: none; }
-        .pcol-drag { cursor: grabbing; opacity: .92; z-index: 20; box-shadow: 0 0 60px rgba(0, 0, 0, .5); }
+        .pcol-drag { cursor: grabbing; opacity: .92; z-index: 20; box-shadow: 0 0 60px rgba(0, 0, 0, .5); margin-left: 0; }
         #paletteContainer.is-dragging .pcol { transition: box-shadow .25s ease; }
         #paletteContainer.is-dragging .pcol:hover { flex-grow: 1; }
         #paletteContainer.is-dragging .pcol:hover .pcol-title { transform: none; }
@@ -972,7 +985,11 @@ ul,ol{margin:0;padding:0;list-style:none}
         .ads-cta button { color: #6d28d9; font-weight: 900; text-decoration: underline; background: none; border: 0; cursor: pointer; font-size: .82rem; }
 
         /* Sayt footer-i */
-        .site-footer { border-top: 1px solid var(--hairline); margin-top: 3.5rem; padding: 2.5rem 0 2rem; }
+        .site-footer {
+            position: relative; z-index: 2;   /* sticky giriş panelinin üstündə qalsın */
+            border-top: 1px solid var(--hairline); margin-top: 3.5rem; padding: 2.5rem 0 2rem;
+            background: var(--page-bg);
+        }
         .sf-inner { display: grid; grid-template-columns: 1fr; gap: 2rem; }
         @media (min-width: 760px) { .sf-inner { grid-template-columns: 1.3fr 1fr 1fr; } }
         .sf-mark { display: inline-flex; align-items: center; gap: .75rem; font-size: 1.15rem; font-weight: 900; letter-spacing: .22em; color: #0f172a; }
@@ -985,6 +1002,15 @@ ul,ol{margin:0;padding:0;list-style:none}
         .sf-link.is-soon:hover { color: #cbd5e1; }
         .sf-author { font-size: .95rem; font-weight: 900; color: #0f172a; }
         .sf-role { font-size: .62rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #94a3b8; margin-bottom: .25rem; }
+        .sf-idea {
+            display: inline-flex; align-items: center; gap: .5rem; margin-top: 1rem;
+            padding: .6rem 1rem; border-radius: 9999px; cursor: pointer;
+            border: 1px solid #ddd6fe; background: #f5f3ff; color: #6d28d9;
+            font-size: .74rem; font-weight: 800; transition: all .2s ease;
+        }
+        .sf-idea svg { width: .95rem; height: .95rem; }
+        .sf-idea:hover { background: #6d28d9; border-color: #6d28d9; color: #fff; }
+        [data-theme="dark"] .sf-idea { background: #1b1b3a; border-color: #312e81; color: #a5b4fc; }
         .sf-socials { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .9rem; }
         .sf-social { display: inline-flex; align-items: center; gap: .45rem; padding: .5rem .85rem; border-radius: 9999px; border: 1px solid var(--hairline); background: #fff; color: #334155; font-size: .74rem; font-weight: 800; transition: all .2s ease; }
         .sf-social:hover { background: #0f172a; border-color: #0f172a; color: #fff; }
@@ -1605,6 +1631,340 @@ ul,ol{margin:0;padding:0;list-style:none}
         }
         .ty-wlink:hover i { background: #4f46e5; color: #fff; }
 
+        /* --- Palitra ixracı --- */
+        .ex-lead {
+            padding: .9rem 1.1rem; margin-bottom: 1.1rem; border-radius: .8rem;
+            background: #eef2ff; border: 1px solid #ddd6fe;
+            font-size: .78rem; line-height: 1.6; color: #4338ca;
+        }
+        /* ============================================================
+           PALİTRA İNFO PANELİ (#paletteInfoBox)
+           Açıq: kart + altında iki düymə. Yığılmış: yalnız incə zolaq.
+           ============================================================ */
+        .pib {
+            position: absolute; top: 6rem; right: 1rem; z-index: 50;
+            width: 26rem; max-width: calc(100% - 2rem);
+            cursor: grab; user-select: none; touch-action: none;
+        }
+        .pib:active { cursor: grabbing; }
+        @media (min-width: 640px) { .pib { right: 2rem; } }
+
+        .pib-card {
+            position: relative;
+            padding: 1.05rem 1.05rem .95rem;
+            border-radius: .7rem;
+            background: rgba(255,255,255,.85);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.55), 0 18px 42px rgba(15,23,42,.16);
+        }
+        @supports not (backdrop-filter: blur(4px)) {
+            .pib-card { background: rgba(255,255,255,.97); }
+        }
+        .pib-grip {
+            position: absolute; top: .5rem; left: 50%; transform: translateX(-50%);
+            width: 2.6rem; height: .2rem; border-radius: 9999px;
+            background: #D1C6C6; opacity: .8; pointer-events: none;
+        }
+
+        .pib-plus {
+            position: absolute; top: .95rem; right: .95rem; z-index: 5;
+            display: flex; align-items: center; justify-content: center;
+            width: 2.3rem; height: 2.3rem; border-radius: 9999px; cursor: pointer;
+            border: 0; background: #EDE7EC; color: #758297;
+            transition: background-color .2s ease, color .2s ease;
+        }
+        .pib-plus svg { width: 1rem; height: 1rem; }
+        .pib-plus .pi-plus { display: none; }
+        .pib-plus:hover { background: #0f172a; color: #fff; }
+
+        .pib-title {
+            font-size: 1.28rem; font-weight: 900; letter-spacing: -.03em;
+            line-height: 1.6rem; color: #0f172a; padding-right: 2.8rem;
+            display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1;
+            overflow: hidden; min-height: 1.6rem;
+        }
+        .pib-mood {
+            margin-top: .2rem; font-size: .8rem; line-height: 1.15rem; color: #64748b;
+            padding-right: 2.8rem;
+            display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+            overflow: hidden; min-height: 2.3rem;
+        }
+        .pib-hint { margin-top: .7rem; font-size: .64rem; line-height: .95rem; color: #7c8899; }
+
+        .pib-row { display: flex; align-items: center; gap: .6rem; margin-top: .7rem; }
+        .pib-dots { display: flex; align-items: center; gap: .45rem; flex: 1 1 auto; min-width: 0; min-height: 2.4rem; }
+        .pib-dot { position: relative; width: 2.4rem; height: 2.4rem; flex: 0 0 auto; }
+        .pib-dot-c {
+            width: 100%; height: 100%; border: 0; border-radius: 9999px; cursor: pointer; padding: 0;
+            box-shadow: inset 0 0 0 1px rgba(15,23,42,.07);
+            transition: transform .2s cubic-bezier(.22,1,.36,1);
+        }
+        .pib-dot:hover .pib-dot-c { transform: scale(1.08); }
+        .pib-dot-x {
+            position: absolute; top: -.15rem; right: -.15rem; z-index: 2;
+            display: flex; align-items: center; justify-content: center;
+            width: 1rem; height: 1rem; border-radius: 9999px; cursor: pointer;
+            border: 0; background: #fff; color: #FF3232;
+            box-shadow: 0 1px 3px rgba(15,23,42,.2);
+            opacity: 0; transform: scale(.7);
+            transition: opacity .18s ease, transform .18s ease;
+        }
+        .pib-dot:hover .pib-dot-x { opacity: 1; transform: scale(1); }
+        .pib-dot-x svg { width: .52rem; height: .52rem; }
+
+        .pib-div { width: 1.5px; height: 1.7rem; border-radius: 9999px; background: #C5C8CE; flex: 0 0 auto; }
+        .pib-acts { display: flex; align-items: center; gap: .4rem; flex: 0 0 auto; }
+        .pib-act {
+            display: flex; align-items: center; justify-content: center;
+            width: 2.4rem; height: 2.4rem; border-radius: 9999px; cursor: pointer;
+            border: 0; color: #fff;
+            transition: transform .2s cubic-bezier(.22,1,.36,1);
+        }
+        .pib-act svg { width: 1.05rem; height: 1.05rem; }
+        .pib-act:hover { transform: translateY(-2px); }
+        .pib-act.is-share { background: #059669; }
+        .pib-act.is-export { background: #4F46E5; }
+        .pib-act.is-save,
+        .pib-act.is-mine { background: #1E293B; }
+        .pib-act.is-copied { background: #10b981 !important; }
+
+        /* alt düymələr — kartın XARİCİNDƏ */
+        .pib-foot { display: flex; align-items: stretch; gap: .4rem; margin-top: .5rem; }
+        .pib-save {
+            flex: 1 1 62%; display: flex; align-items: center; justify-content: center; gap: .5rem;
+            min-height: 2.35rem; border: 0; border-radius: .6rem; cursor: pointer;
+            background: rgba(23,33,50,.82); color: #fff; font-size: .76rem; font-weight: 700;
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            backdrop-filter: blur(16px) saturate(180%);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), 0 6px 16px rgba(15,23,42,.16);
+            transition: background-color .2s ease;
+        }
+        .pib-save:hover { background: rgba(15,23,42,.95); }
+        .pib-save svg { width: .95rem; height: .95rem; flex: 0 0 auto; }
+        .pib-next {
+            flex: 1 1 38%; display: flex; align-items: center; justify-content: center;
+            min-height: 2.35rem; border: 0; border-radius: .6rem; cursor: pointer;
+            background: rgba(255,255,255,.7); color: #0f172a; font-size: .74rem; font-weight: 800;
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            backdrop-filter: blur(16px) saturate(180%);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.55), 0 6px 16px rgba(15,23,42,.12);
+            transition: background-color .2s ease;
+        }
+        .pib-next:hover { background: rgba(255,255,255,.92); }
+        @supports not (backdrop-filter: blur(4px)) {
+            .pib-save { background: #1E293B; }
+            .pib-next { background: rgba(255,255,255,.97); }
+        }
+
+        /* --- YIĞILMIŞ: yalnız rənglər, ayırıcı və «+» --- */
+        #paletteInfoBox.is-min { width: auto; }
+        #paletteInfoBox.is-min .pib-head,
+        #paletteInfoBox.is-min .pib-foot { display: none !important; }
+        #paletteInfoBox.is-min .pib-card {
+            display: inline-flex; align-items: center; padding: .95rem .7rem .55rem;
+            background: rgba(255,255,255,.55);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            backdrop-filter: blur(16px) saturate(180%);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.5), 0 10px 30px rgba(15,23,42,.14);
+        }
+        @supports not (backdrop-filter: blur(4px)) {
+            #paletteInfoBox.is-min .pib-card { background: rgba(255,255,255,.92); }
+        }
+        [data-theme="dark"] #paletteInfoBox.is-min .pib-card {
+            background: rgba(22,22,24,.55);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.1), 0 10px 30px rgba(0,0,0,.3);
+        }
+        #paletteInfoBox.is-min .pib-grip { background: rgba(15,23,42,.28); }
+        #paletteInfoBox.is-min .pib-plus { background: rgba(255,255,255,.6); }
+        #paletteInfoBox.is-min .pib-plus:hover { background: #0f172a; }
+        #paletteInfoBox.is-min .pib-row { margin-top: 0; }
+        #paletteInfoBox.is-min .pib-acts { display: none; }
+        /* «+» rənglərdən SONRA gəlir — order ilə sıranın sonuna keçir */
+        #paletteInfoBox.is-min .pib-plus {
+            position: static; order: 9; flex: 0 0 auto; margin-left: .55rem;
+            width: 2.4rem; height: 2.4rem; background: #EDE7EC;
+        }
+        #paletteInfoBox.is-min .pib-row { order: 1; flex: 0 0 auto; }
+        #paletteInfoBox.is-min .pib-plus .pi-minus { display: none; }
+        #paletteInfoBox.is-min .pib-plus .pi-plus { display: block; }
+        #paletteInfoBox.is-min .pib-grip { top: .42rem; }
+
+        [data-theme="dark"] .pib-card, [data-theme="dark"] .pib-next {
+            background: rgba(22,22,24,.8);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.09), 0 18px 42px rgba(0,0,0,.3);
+        }
+        [data-theme="dark"] .pib-mood { color: #94a3b8; }
+        [data-theme="dark"] .pib-hint { color: #7c8899; }
+        [data-theme="dark"] .pib-title { color: #e2e8f0; }
+        [data-theme="dark"] .pib-next { color: #e2e8f0; }
+
+        .ex-top { display: grid; grid-template-columns: repeat(2, 1fr); gap: .7rem; margin-bottom: 1.3rem; }
+        @media (min-width: 640px) { .ex-top { grid-template-columns: repeat(4, 1fr); } }
+        .ex-tile {
+            position: relative; display: flex; flex-direction: column; align-items: flex-start;
+            gap: .1rem; padding: 1rem .9rem 2.4rem; border-radius: 1rem; cursor: pointer; text-align: left;
+            border: 1px solid var(--hairline); background: #fff; overflow: hidden;
+            transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+        }
+        .ex-tile::before {
+            content: ''; position: absolute; inset: 0; background: var(--tone); opacity: 0;
+            transition: opacity .25s ease;
+        }
+        .ex-tile:hover { border-color: var(--tone); transform: translateY(-3px); box-shadow: 0 12px 28px rgba(15,23,42,.12); }
+        .ex-tile:hover::before { opacity: .06; }
+        .ex-tile > * { position: relative; z-index: 1; }
+        .ex-tile-ico {
+            display: flex; align-items: center; justify-content: center;
+            width: 2.5rem; height: 2.5rem; border-radius: .75rem; margin-bottom: .55rem;
+            background: var(--tone); color: #fff;
+        }
+        .ex-tile-ico svg { width: 1.15rem; height: 1.15rem; }
+        .ex-tile b { font-size: .84rem; font-weight: 800; color: #0f172a; line-height: 1.25; }
+        .ex-tile em { font-style: normal; font-size: .66rem; line-height: 1.45; color: #94a3b8; margin-top: .2rem; }
+        .ex-tile .ex-act { position: absolute; left: .95rem; bottom: .9rem; }
+        .ex-tile.is-done { border-color: #10b981; }
+        .ex-tile.is-done::before { background: #10b981; opacity: .09; }
+        .ex-tile.is-done .ex-tile-ico { background: #10b981; }
+        .ex-tile.is-done .ex-act { color: #047857; }
+
+        .ex-sep {
+            font-size: .55rem; font-weight: 900; letter-spacing: .16em; text-transform: uppercase;
+            color: #cbd5e1; margin-bottom: .6rem;
+        }
+        .ex-grid { display: grid; grid-template-columns: 1fr; gap: .6rem; }
+        .ex-card {
+            display: flex; align-items: center; gap: .9rem; width: 100%;
+            padding: .9rem 1rem; border-radius: .9rem; cursor: pointer; text-align: left;
+            border: 1px solid var(--hairline); background: #fff;
+            transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+        }
+        .ex-card:hover { border-color: #6366f1; transform: translateX(3px); box-shadow: 0 6px 18px rgba(15,23,42,.07); }
+        .ex-card.is-primary { border-color: #c7d2fe; background: #f8f9ff; }
+        .ex-card.is-done { border-color: #10b981; background: #ecfdf5; }
+        .ex-ico {
+            flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
+            width: 2.4rem; height: 2.4rem; border-radius: .7rem;
+            background: #f1f5f9; color: #4f46e5;
+        }
+        .ex-card.is-primary .ex-ico { background: #4f46e5; color: #fff; }
+        .ex-card.is-done .ex-ico { background: #10b981; color: #fff; }
+        .ex-ico svg { width: 1.05rem; height: 1.05rem; }
+        .ex-body { flex: 1 1 auto; min-width: 0; }
+        .ex-body b { display: block; font-size: .84rem; font-weight: 800; color: #0f172a; }
+        .ex-body em { display: block; font-style: normal; font-size: .7rem; line-height: 1.45; color: #94a3b8; margin-top: .12rem; }
+        .ex-act {
+            flex: 0 0 auto; font-size: .62rem; font-weight: 900;
+            letter-spacing: .1em; text-transform: uppercase; color: #94a3b8;
+        }
+        .ex-card.is-done .ex-act { color: #047857; }
+        [data-theme="dark"] .ex-card, [data-theme="dark"] .ex-tile { background: #161618; border-color: #2b2b2f; }
+        [data-theme="dark"] .ex-tile b { color: #e2e8f0; }
+        [data-theme="dark"] .ex-body b { color: #e2e8f0; }
+        [data-theme="dark"] .ex-ico { background: #232326; }
+        [data-theme="dark"] .ex-lead { background: #1b1b3a; border-color: #312e81; color: #a5b4fc; }
+
+        /* --- İdeya pəncərəsi --- */
+        .idea-panel {
+            position: relative; display: grid; grid-template-columns: 1fr;
+            width: min(58rem, 94vw); max-height: 90vh; overflow: hidden;
+            border-radius: 1.5rem; background: #fff;
+            box-shadow: 0 40px 90px rgba(15, 23, 42, .35);
+        }
+        @media (min-width: 820px) { .idea-panel { grid-template-columns: 19rem 1fr; } }
+        .idea-x {
+            position: absolute; right: 1rem; top: 1rem; z-index: 3;
+            width: 2.2rem; height: 2.2rem; border-radius: 9999px; cursor: pointer;
+            border: 0; background: rgba(15,23,42,.06); color: #64748b; font-size: .8rem;
+            transition: all .2s ease;
+        }
+        .idea-x:hover { background: #0f172a; color: #fff; }
+
+        .idea-side {
+            padding: 2.4rem 2rem; color: #fff;
+            background: radial-gradient(120% 120% at 15% 10%, #6d28d9 0%, #4c1d95 55%, #2e1065 100%);
+            display: flex; flex-direction: column;
+        }
+        .idea-badge {
+            display: inline-block; align-self: flex-start; padding: .3rem .7rem;
+            border-radius: 9999px; background: rgba(255,255,255,.16);
+            font-size: .55rem; font-weight: 900; letter-spacing: .18em;
+        }
+        .idea-side h2 {
+            margin-top: 1.2rem; font-size: 1.7rem; font-weight: 900;
+            letter-spacing: -.03em; line-height: 1.12;
+        }
+        .idea-side > p { margin-top: .6rem; font-size: .85rem; line-height: 1.6; color: rgba(255,255,255,.72); }
+        .idea-points { margin-top: 1.6rem; display: flex; flex-direction: column; gap: .6rem; }
+        .idea-points li {
+            position: relative; padding-left: 1.3rem;
+            font-size: .78rem; line-height: 1.5; color: rgba(255,255,255,.86);
+        }
+        .idea-points li::before {
+            content: ''; position: absolute; left: 0; top: .42rem;
+            width: .45rem; height: .45rem; border-radius: 9999px; background: #a78bfa;
+        }
+        .idea-side-foot {
+            margin-top: auto; padding-top: 1.6rem;
+            font-size: .66rem; line-height: 1.55; color: rgba(255,255,255,.5);
+        }
+
+        .idea-main {
+            padding: 2.2rem 2.2rem 1.8rem; display: flex; flex-direction: column; gap: 1rem;
+            overflow-y: auto;
+        }
+        .idea-field { position: relative; display: flex; flex-direction: column; }
+        .idea-field.is-grow { flex: 1 1 auto; min-height: 0; }
+        .idea-field > span {
+            font-size: .55rem; font-weight: 900; letter-spacing: .15em;
+            text-transform: uppercase; color: #94a3b8; margin-bottom: .45rem;
+        }
+        .idea-opt { font-style: normal; letter-spacing: 0; text-transform: none; color: #cbd5e1; margin-left: .3rem; }
+        .idea-field textarea, .idea-field input {
+            width: 100%; padding: .9rem 1rem; border-radius: .85rem;
+            border: 1px solid var(--hairline); background: #fbfbfd; color: #0f172a;
+            font-size: .88rem; font-family: inherit; font-weight: 500; outline: none;
+            transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+        }
+        .idea-field textarea { min-height: 12rem; resize: vertical; line-height: 1.65; }
+        .idea-field textarea:focus, .idea-field input:focus {
+            border-color: #6d28d9; background: #fff; box-shadow: 0 0 0 4px rgba(109,40,217,.1);
+        }
+        .idea-count {
+            position: absolute; right: .1rem; top: 0; font-style: normal;
+            font-size: .58rem; font-weight: 700; color: #cbd5e1;
+        }
+        .idea-row { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+        @media (min-width: 560px) { .idea-row { grid-template-columns: 1fr 1fr; } }
+        .idea-err, .idea-ok {
+            padding: .75rem .95rem; border-radius: .7rem;
+            font-size: .76rem; font-weight: 700; line-height: 1.5;
+        }
+        .idea-err { background: #fff1f2; border: 1px solid #fecdd3; color: #be123c; }
+        .idea-ok { background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; }
+        .idea-alt { text-decoration: underline; font-weight: 800; }
+        .idea-actions { display: flex; gap: .6rem; justify-content: flex-end; margin-top: .2rem; }
+        .idea-cancel {
+            height: 2.9rem; padding: 0 1.2rem; border-radius: .8rem; cursor: pointer;
+            border: 1px solid var(--hairline); background: #fff; color: #64748b;
+            font-size: .82rem; font-weight: 800; transition: all .2s ease;
+        }
+        .idea-cancel:hover { background: #f8fafc; color: #0f172a; }
+        .idea-send {
+            height: 2.9rem; padding: 0 2rem; border-radius: .8rem; cursor: pointer;
+            border: 0; background: #6d28d9; color: #fff;
+            font-size: .85rem; font-weight: 800; transition: opacity .2s ease, transform .2s ease;
+        }
+        .idea-send:hover { opacity: .92; transform: translateY(-1px); }
+        .idea-send:disabled { opacity: .5; cursor: default; transform: none; }
+
+        [data-theme="dark"] .idea-panel { background: #161618; }
+        [data-theme="dark"] .idea-field textarea, [data-theme="dark"] .idea-field input,
+        [data-theme="dark"] .idea-cancel { background: #111113; border-color: #2b2b2f; color: #e2e8f0; }
+        [data-theme="dark"] .idea-field textarea:focus, [data-theme="dark"] .idea-field input:focus { background: #161618; }
+        [data-theme="dark"] .idea-x { background: #232326; color: #cbd5e1; }
+        [data-theme="dark"] .idea-ok { background: #0e2a20; border-color: #14532d; color: #6ee7b7; }
+        [data-theme="dark"] .idea-err { background: #241618; border-color: #3d2126; color: #fda4af; }
         .wc-lead { font-size: .85rem; line-height: 1.7; color: #475569; }
         .wc-rows { display: flex; flex-direction: column; gap: .5rem; }
         .wc-row {
@@ -1832,22 +2192,8 @@ ul,ol{margin:0;padding:0;list-style:none}
         .explore-btn svg { width: 1.05rem; height: 1.05rem; }
         .explore-btn:hover { background: #047857; transform: translateY(-1px); }
 
-        .profile-fab {
-            position: fixed; top: 1.1rem; right: 1.1rem; z-index: 58;
-            display: inline-flex; align-items: center; gap: .55rem;
-            padding: .75rem 1.15rem; border-radius: 9999px; cursor: pointer;
-            background: #fff; color: #0f172a; border: 1px solid var(--hairline);
-            font-size: .8rem; font-weight: 800;
-            box-shadow: 0 10px 26px rgba(15, 23, 42, .16);
-            transition: transform .2s ease, box-shadow .2s ease;
-        }
-        .profile-fab svg { width: 1.05rem; height: 1.05rem; }
-        .profile-fab:hover { transform: translateY(-1px); box-shadow: 0 14px 30px rgba(15, 23, 42, .22); }
-        .profile-fab.is-hidden { display: none; }
         @media (min-width: 768px) { #colorTopBar { padding-right: 8.5rem; } }
         @media (max-width: 640px) {
-            .profile-fab span { display: none; }
-            .profile-fab { padding: .7rem; }
             .explore-btn span { display: none; }
             .explore-btn { padding: .8rem; }
         }
@@ -1967,12 +2313,6 @@ ul,ol{margin:0;padding:0;list-style:none}
     </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col items-center py-10 px-4 font-sans relative">
-
-    <!-- QLOBAL PROFİL DÜYMƏSİ -->
-    <button id="profileBtn" class="profile-fab is-hidden" title="Mənim rənglərim">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.1a7.5 7.5 0 0115 0"></path></svg>
-        <span data-i18n="profile_btn">Mənim rənglərim</span>
-    </button>
 
     <!-- TOAST BİLDİRİŞİ -->
     <div id="toast" class="fixed top-5 right-5 bg-slate-800 text-white px-6 py-3 rounded-lg shadow-2xl opacity-0 translate-y-[-20px] pointer-events-none transition-all duration-300 z-50">
@@ -2133,35 +2473,59 @@ ul,ol{margin:0;padding:0;list-style:none}
              </div>
         </div>
 
-        <div id="paletteInfoBox" class="absolute top-24 right-4 sm:right-8 z-50 bg-white/90 backdrop-blur p-5 rounded-2xl shadow-2xl w-[calc(100%-2rem)] max-w-sm border border-white/50 transition-opacity duration-300 cursor-grab active:cursor-grabbing group select-none touch-none">
-             <div class="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1.5 bg-slate-300 rounded-full opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+        <div id="paletteInfoBox" class="pib pointer-events-auto">
+             <div class="pib-card">
+                 <div class="pib-grip"></div>
 
-             <button onclick="document.getElementById('paletteInfoBox').classList.add('hidden')" class="absolute top-3 right-3 text-slate-400 hover:text-rose-500 transition-colors cursor-pointer p-1 z-50">
-                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-             </button>
+                 <button id="pibMinBtn" class="pib-plus" onclick="togglePaletteBox(event)" title="">
+                     <svg class="pi-minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg>
+                     <svg class="pi-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg>
+                 </button>
 
-             <h2 id="paletteTheme" class="text-xl font-black text-slate-800 mb-1 pr-6 mt-3">Rəng Palitrası</h2>
-             <p id="paletteMood" class="text-xs text-slate-600 leading-relaxed mb-4">Rənglərin ahəngini və psixoloji təsirini kəşf edin.</p>
+                 <div id="pibHead" class="pib-head">
+                     <h2 id="paletteTheme" class="pib-title">Rəng Palitrası</h2>
+                     <p id="paletteMood" class="pib-mood">Rənglərin ahəngini və psixoloji təsirini kəşf edin.</p>
+                     <p class="pib-hint" data-i18n="saved_hint">Seçilmiş rəngləri palitraya əlavə etmək üçün klikləyin.</p>
+                 </div>
 
-             <button id="regenPaletteBtn" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold py-2.5 rounded-xl transition-colors cursor-pointer z-50 pointer-events-auto shadow-md">
-                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                 <span data-i18n="regen_btn">Növbəti Palitra (Space)</span>
-             </button>
+                 <div class="pib-row">
+                     <div id="savedColorsList" class="pib-dots"></div>
+                     <span class="pib-div"></span>
+                     <div class="pib-acts">
+                         <button class="pib-act is-share" onclick="sharePalette(event)" data-tip="share_btn">
+                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                 <circle cx="17.5" cy="6.5" r="2.4"/><circle cx="6.5" cy="12" r="2.4"/><circle cx="17.5" cy="17.5" r="2.4"/>
+                                 <path d="M8.9 13.3l6.2 3.2M15.1 7.9l-6.2 3.2"/>
+                             </svg>
+                         </button>
+                         <button class="pib-act is-export" onclick="openExport()" data-tip="export_btn">
+                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                 <path d="M12 16.5V4.5M12 4l5.5 5.5M12 4L6.5 9.5M5.5 19.5h13"/>
+                             </svg>
+                         </button>
+                         <button id="myColorsBtn" class="pib-act is-mine" data-tip="my_colors">
+                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                 <path d="M12 21a9 9 0 110-18c4.5 0 8 3 8 6.6 0 2.3-1.9 4.1-4.2 4.1H14a1.8 1.8 0 00-1.3 3.1c.3.3.5.7.5 1.2 0 .6-.5 1-1.2 1z"/>
+                                 <circle cx="7.6" cy="11.4" r="1.1" fill="currentColor" stroke="none"/>
+                                 <circle cx="10.4" cy="7.6" r="1.1" fill="currentColor" stroke="none"/>
+                                 <circle cx="15" cy="7.9" r="1.1" fill="currentColor" stroke="none"/>
+                             </svg>
+                         </button>
+                     </div>
+                 </div>
+             </div>
 
-             <button id="savePaletteBtn" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold py-2.5 rounded-xl transition-colors cursor-pointer mt-2 pointer-events-auto shadow-md">
-                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7.5 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75h-1.5m-9 0V9h9V3.75m-9 0h9"></path></svg>
-                 <span data-i18n="save_palette">Palitranı yadda saxla</span>
-             </button>
-
-             <button id="visualiseBtn" class="hidden w-full flex items-center justify-center gap-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-bold py-2.5 rounded-xl transition-colors cursor-pointer mt-2 pointer-events-auto shadow-sm">
-                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.036 12.322a1 1 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178a1 1 0 010 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                 <span data-i18n="visualise_btn">Rəngləri təsəvvür et</span>
-             </button>
-
-             <div id="savedColorsSection" class="hidden mt-5 pt-4 border-t border-slate-200/60 pointer-events-auto cursor-default">
-                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1" data-i18n="saved_colors">Seçilmiş Rənglər</p>
-                 <p class="text-[10px] text-slate-400 mb-3" data-i18n="saved_hint">Palitraya əlavə etmək üçün kliklə</p>
-                 <div id="savedColorsList" class="flex flex-wrap gap-2.5"></div>
+             <div class="pib-foot" id="pibFoot">
+                 <button id="savePaletteBtn" class="pib-save">
+                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                         <rect x="3.8" y="3.8" width="16.4" height="16.4" rx="2"/>
+                         <path d="M16 3.8V8a2 2 0 01-2 2h-4a2 2 0 01-2-2V3.8"/>
+                     </svg>
+                     <span data-i18n="save_palette">Palitranı yadda saxla</span>
+                 </button>
+                 <button id="regenPaletteBtn" class="pib-next">
+                     <span data-i18n="regen_btn">Növbəti Palitra (Space)</span>
+                 </button>
              </div>
         </div>
 
@@ -2261,6 +2625,72 @@ ul,ol{margin:0;padding:0;list-style:none}
 
         <div id="paletteContainer" class="flex-grow flex flex-col md:flex-row w-full min-h-full">
             <!-- Sütunlar JS tərəfindən bura əlavə ediləcək -->
+        </div>
+    </div>
+
+    <!-- PALİTRA İXRACI -->
+    <div id="exportModal" class="viz-modal is-hidden">
+        <div class="viz-panel" style="max-width:40rem">
+            <div class="viz-head">
+                <div>
+                    <h2 data-i18n="export_title">Palitranı ixrac et</h2>
+                    <p data-i18n="export_sub">Figma, kod və ya fayl — istədiyiniz formatda</p>
+                </div>
+                <button class="viz-close" id="exportClose"><span data-i18n="close_btn">Bağla</span> ✕</button>
+            </div>
+
+            <p class="ex-lead" data-i18n="export_figma_how">Figma üçün: aşağıdakı «Figma üçün kopyala» düyməsinə basın, sonra Figma-da kətanın üzərinə keçib Ctrl+V (Mac-da ⌘V) edin. Palitra hazır çərçivələr kimi yapışdırılacaq — plugin lazım deyil.</p>
+
+            <div class="ex-top" id="exportTop"></div>
+            <p class="ex-sep" data-i18n="ex_more">Tərtibatçı formatları</p>
+            <div class="ex-grid" id="exportList"></div>
+        </div>
+    </div>
+
+    <!-- İDEYA GÖNDƏRMƏ -->
+    <div id="ideaModal" class="viz-modal is-hidden">
+        <div class="idea-panel">
+            <button class="idea-x" id="ideaClose" aria-label="close">✕</button>
+
+            <aside class="idea-side">
+                <span class="idea-badge" data-i18n="idea_badge">TƏKLİF</span>
+                <h2 data-i18n="idea_title">İdeyanızı göndərin</h2>
+                <p data-i18n="idea_sub">Nəyi əlavə edək, nəyi dəyişək?</p>
+                <ul class="idea-points">
+                    <li data-i18n="idea_p1">Yeni alət və ya bölmə təklifi</li>
+                    <li data-i18n="idea_p2">Mövcud alətdə çatışmayan funksiya</li>
+                    <li data-i18n="idea_p3">Səhv və ya nasazlıq barədə bildiriş</li>
+                </ul>
+                <p class="idea-side-foot" data-i18n="idea_note">Mesajınız birbaşa layihə rəhbərinə göndərilir. Qeydiyyat tələb olunmur.</p>
+            </aside>
+
+            <div class="idea-main">
+                <label class="idea-field is-grow">
+                    <span data-i18n="idea_msg">İdeyanız</span>
+                    <textarea id="ideaText" maxlength="1200"
+                              data-i18n-placeholder="idea_ph" placeholder="Məsələn: palitranı Figma-ya köçürmək üçün düymə olsa yaxşı olardı…"></textarea>
+                    <em class="idea-count" id="ideaCount">0 / 1200</em>
+                </label>
+
+                <div class="idea-row">
+                    <label class="idea-field">
+                        <span data-i18n="idea_name">Adınız <em class="idea-opt" data-i18n="gs_optional">istəyə görə</em></span>
+                        <input type="text" id="ideaName" maxlength="60" placeholder="Ad Soyad">
+                    </label>
+                    <label class="idea-field">
+                        <span data-i18n="idea_mail">E-poçt <em class="idea-opt" data-i18n="gs_optional">istəyə görə</em></span>
+                        <input type="email" id="ideaMail" maxlength="90" placeholder="ad@mail.com">
+                    </label>
+                </div>
+
+                <p class="idea-err" id="ideaError" style="display:none"></p>
+                <p class="idea-ok" id="ideaOk" style="display:none"></p>
+
+                <div class="idea-actions">
+                    <button class="idea-cancel" id="ideaCancel" data-i18n="close_btn">Bağla</button>
+                    <button class="idea-send" id="ideaSend" data-i18n="idea_send">Göndər</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2806,6 +3236,55 @@ ul,ol{margin:0;padding:0;list-style:none}
                 algo_std_desc: "Itti–Koch modelinə mərkəz meyli (Tatler 2007) əlavə olunur. İnsanlar şəklə baxarkən fiksasiyalar statistik olaraq mərkəzə toplaşır — foto və reklam üçün real nəticə verir.",
                 algo_dyn_desc: "Yalnız aşağıdan-yuxarı (bottom-up) saliency — mərkəz meyli tətbiq edilmir. Poster və asimmetrik kompozisiyalarda əsl kontrast mənbələrini göstərir.",
                 method_note: "Metod: Itti–Koch–Niebur (1998) saliency modeli — çoxmiqyaslı mərkəz-ətraf fərqləri (intensivlik, rəng oponentliyi, oriyentasiya), üz proxy-si və mərkəz meyli. Fiksasiyalar winner-take-all + inhibition of return ilə seçilir.",
+                saved_full: "Maksimum {n} rəng saxlaya bilərsiniz — birini silin.",
+                my_colors: "Mənim rənglərim",
+                pib_min: "Yığ",
+                pib_open: "Aç",
+                ex_more: "Tərtibatçı formatları",
+                share_btn: "Linki paylaş",
+                share_copied: "Link kopyalandı — istənilən yerə yapışdırın",
+                share_title: "Rəng palitrası",
+                share_text: "Bu palitraya bax",
+                share_link: "Paylaşma linki",
+                share_link_d: "Palitra ünvanın içindədir — açan eynisini görür",
+                ex_figma_one: "Figma üçün kopyala",
+                ex_figma_done: "Figma üçün kopyalandı — kətana Ctrl+V edin",
+                export_btn: "İxrac et",
+                export_title: "Palitranı ixrac et",
+                export_sub: "Figma, kod və ya fayl — istədiyiniz formatda",
+                export_figma_how: "<b>Figma üçün:</b> «Figma üçün kopyala» düyməsinə basın, sonra Figma-da kətanın üzərində <b>Ctrl+V</b> (Mac-da <b>⌘V</b>) edin. Palitra adlandırılmış çərçivələr kimi yapışdırılacaq — plugin lazım deyil.",
+                ex_figma: "Figma üçün kopyala",
+                ex_figma_d: "Kətana yapışdırın — hər rəng ayrıca çərçivə olur",
+                ex_css_d: "CSS dəyişənləri — :root bloku",
+                ex_tw_d: "tailwind.config.js üçün rəng bloku",
+                ex_tokens_d: "Tokens Studio plugini üçün JSON",
+                ex_text: "Sadə mətn",
+                ex_text_d: "HEX kodları və adları siyahı kimi",
+                ex_svg_d: "Tam məlumatlı vektor fayl (RGB, CMYK, PMS, RAL)",
+                ex_copy: "Kopyala",
+                ex_dl: "Yüklə",
+                ex_done: "Hazırdır",
+                ex_fail: "Alınmadı",
+                idea_p3: "Səhv və ya nasazlıq barədə bildiriş",
+                idea_p2: "Mövcud alətdə çatışmayan funksiya",
+                idea_p1: "Yeni alət və ya bölmə təklifi",
+                idea_badge: "TƏKLİF",
+                gs_optional: "istəyə görə",
+                idea_btn: "İdeya göndər",
+                idea_title: "İdeyanızı göndərin",
+                idea_sub: "Nəyi əlavə edək, nəyi dəyişək?",
+                idea_msg: "İdeyanız",
+                idea_ph: "Məsələn: palitranı Figma-ya köçürmək üçün düymə olsa yaxşı olardı…",
+                idea_name: "Adınız",
+                idea_mail: "E-poçt",
+                idea_send: "Göndər",
+                idea_sending: "Göndərilir…",
+                idea_ok: "Təşəkkürlər — ideyanız göndərildi.",
+                idea_e_short: "Ən azı bir neçə cümlə yazın.",
+                idea_e_mail: "E-poçt ünvanı düzgün deyil.",
+                idea_e_send: "Göndərilmədi.",
+                idea_mailto: "Poçt proqramı ilə göndər",
+                idea_note: "Mesajınız birbaşa layihə rəhbərinə göndərilir. Qeydiyyat tələb olunmur.",
                 codes_show: "Kodlar",
                 hex_invalid: "Yararsız HEX kodu",
                 hex_edit_hint: "Dəyişmək üçün klikləyin",
@@ -3151,7 +3630,6 @@ ul,ol{margin:0;padding:0;list-style:none}
                 presets_count: "rəng",
                 presets_liked_n: "bəyənilib",
                 preset_mood: "Hazır palitralar kolleksiyasından seçilib.",
-                profile_btn: "Mənim rənglərim",
                 profile_title: "Mənim rənglərim",
                 export_svg: "SVG kimi yüklə",
                 ios_save_hint: "Fayl açıldı — saxlamaq üçün Paylaş → Fayllara yaz seçin.",
@@ -3261,6 +3739,55 @@ ul,ol{margin:0;padding:0;list-style:none}
                 algo_std_desc: "Itti–Koch model plus the central fixation bias (Tatler 2007). When people look at a picture, fixations statistically cluster near the centre — realistic for photos and ads.",
                 algo_dyn_desc: "Pure bottom-up saliency with no centre bias. Reveals the real contrast sources in posters and asymmetric compositions.",
                 method_note: "Method: Itti–Koch–Niebur (1998) saliency model — multi-scale centre–surround differences (intensity, colour opponency, orientation), a face proxy and the central bias. Fixations are picked by winner-take-all with inhibition of return.",
+                saved_full: "You can keep up to {n} colours — remove one first.",
+                my_colors: "My colours",
+                pib_min: "Minimise",
+                pib_open: "Expand",
+                ex_more: "Developer formats",
+                share_btn: "Share link",
+                share_copied: "Link copied — paste it anywhere",
+                share_title: "Colour palette",
+                share_text: "Take a look at this palette",
+                share_link: "Share link",
+                share_link_d: "The palette lives in the URL — anyone who opens it sees the same",
+                ex_figma_one: "Copy for Figma",
+                ex_figma_done: "copied for Figma — paste on the canvas with Ctrl+V",
+                export_btn: "Export",
+                export_title: "Export the palette",
+                export_sub: "Figma, code or file — whichever you need",
+                export_figma_how: "<b>For Figma:</b> press “Copy for Figma”, then go to the Figma canvas and hit <b>Ctrl+V</b> (<b>⌘V</b> on Mac). The palette lands as named frames — no plugin needed.",
+                ex_figma: "Copy for Figma",
+                ex_figma_d: "Paste on the canvas — each colour becomes its own frame",
+                ex_css_d: "CSS custom properties — a :root block",
+                ex_tw_d: "Colour block for tailwind.config.js",
+                ex_tokens_d: "JSON for the Tokens Studio plugin",
+                ex_text: "Plain text",
+                ex_text_d: "HEX codes and names as a list",
+                ex_svg_d: "Full vector sheet (RGB, CMYK, PMS, RAL)",
+                ex_copy: "Copy",
+                ex_dl: "Download",
+                ex_done: "Done",
+                ex_fail: "Failed",
+                idea_p3: "A bug or something that does not work",
+                idea_p2: "A feature missing from an existing tool",
+                idea_p1: "A new tool or section you would like to see",
+                idea_badge: "SUGGESTION",
+                gs_optional: "optional",
+                idea_btn: "Submit an idea",
+                idea_title: "Submit your idea",
+                idea_sub: "What should we add or change?",
+                idea_msg: "Your idea",
+                idea_ph: "For example: a button to export the palette to Figma would help…",
+                idea_name: "Your name",
+                idea_mail: "Email",
+                idea_send: "Send",
+                idea_sending: "Sending…",
+                idea_ok: "Thank you — your idea has been sent.",
+                idea_e_short: "Please write at least a couple of sentences.",
+                idea_e_mail: "That email address looks wrong.",
+                idea_e_send: "Could not send.",
+                idea_mailto: "Send via mail app",
+                idea_note: "Your message goes straight to the project lead. No sign-up required.",
                 codes_show: "Codes",
                 hex_invalid: "Invalid HEX code",
                 hex_edit_hint: "Click to edit",
@@ -3606,7 +4133,6 @@ ul,ol{margin:0;padding:0;list-style:none}
                 presets_count: "colors",
                 presets_liked_n: "liked",
                 preset_mood: "Picked from the ready-made palette collection.",
-                profile_btn: "My colors",
                 profile_title: "My colors",
                 export_svg: "Download SVG",
                 ios_save_hint: "File opened — use Share → Save to Files to keep it.",
@@ -3716,6 +4242,55 @@ ul,ol{margin:0;padding:0;list-style:none}
                 algo_std_desc: "Модель Itti–Koch плюс центральное смещение фиксаций (Tatler 2007). При просмотре изображения взгляд статистически тяготеет к центру — реалистично для фото и рекламы.",
                 algo_dyn_desc: "Чистая восходящая заметность без центрального смещения. Показывает настоящие источники контраста в постерах и асимметричных композициях.",
                 method_note: "Метод: модель Itti–Koch–Niebur (1998) — многомасштабные разности центр–окружение (яркость, цветовая оппонентность, ориентация), прокси лиц и центральное смещение. Фиксации выбираются winner-take-all с торможением возврата.",
+                saved_full: "Можно хранить до {n} цветов — удалите один.",
+                my_colors: "Мои цвета",
+                pib_min: "Свернуть",
+                pib_open: "Развернуть",
+                ex_more: "Форматы для разработки",
+                share_btn: "Поделиться",
+                share_copied: "Ссылка скопирована — вставьте куда угодно",
+                share_title: "Цветовая палитра",
+                share_text: "Посмотрите на эту палитру",
+                share_link: "Ссылка для обмена",
+                share_link_d: "Палитра зашита в адрес — открывший увидит ту же",
+                ex_figma_one: "Копировать для Figma",
+                ex_figma_done: "скопирован для Figma — вставьте на холст через Ctrl+V",
+                export_btn: "Экспорт",
+                export_title: "Экспорт палитры",
+                export_sub: "Figma, код или файл — что нужно",
+                export_figma_how: "<b>Для Figma:</b> нажмите «Копировать для Figma», затем на холсте Figma нажмите <b>Ctrl+V</b> (<b>⌘V</b> на Mac). Палитра вставится именованными фреймами — плагин не нужен.",
+                ex_figma: "Копировать для Figma",
+                ex_figma_d: "Вставьте на холст — каждый цвет отдельным фреймом",
+                ex_css_d: "CSS-переменные — блок :root",
+                ex_tw_d: "Блок цветов для tailwind.config.js",
+                ex_tokens_d: "JSON для плагина Tokens Studio",
+                ex_text: "Простой текст",
+                ex_text_d: "HEX-коды и названия списком",
+                ex_svg_d: "Полный вектор (RGB, CMYK, PMS, RAL)",
+                ex_copy: "Копировать",
+                ex_dl: "Скачать",
+                ex_done: "Готово",
+                ex_fail: "Не удалось",
+                idea_p3: "Ошибка или что-то, что не работает",
+                idea_p2: "Функция, которой не хватает в существующем инструменте",
+                idea_p1: "Новый инструмент или раздел",
+                idea_badge: "ПРЕДЛОЖЕНИЕ",
+                gs_optional: "по желанию",
+                idea_btn: "Предложить идею",
+                idea_title: "Предложите идею",
+                idea_sub: "Что добавить или изменить?",
+                idea_msg: "Ваша идея",
+                idea_ph: "Например: кнопка экспорта палитры в Figma была бы кстати…",
+                idea_name: "Ваше имя",
+                idea_mail: "Эл. почта",
+                idea_send: "Отправить",
+                idea_sending: "Отправка…",
+                idea_ok: "Спасибо — идея отправлена.",
+                idea_e_short: "Напишите хотя бы пару предложений.",
+                idea_e_mail: "Некорректный адрес почты.",
+                idea_e_send: "Не удалось отправить.",
+                idea_mailto: "Отправить через почтовую программу",
+                idea_note: "Сообщение уходит напрямую руководителю проекта. Регистрация не нужна.",
                 codes_show: "Коды",
                 hex_invalid: "Некорректный HEX-код",
                 hex_edit_hint: "Нажмите, чтобы изменить",
@@ -4061,7 +4636,6 @@ ul,ol{margin:0;padding:0;list-style:none}
                 presets_count: "цветов",
                 presets_liked_n: "в избранном",
                 preset_mood: "Выбрано из коллекции готовых палитр.",
-                profile_btn: "Мои цвета",
                 profile_title: "Мои цвета",
                 export_svg: "Скачать SVG",
                 ios_save_hint: "Файл открыт — нажмите Поделиться → Сохранить в Файлы.",
@@ -4135,10 +4709,12 @@ ul,ol{margin:0;padding:0;list-style:none}
         let isColorViewActive = false;
         let paletteSize = 5;
         const MAX_PALETTE = 10;
+        const MAX_SAVED = 5;   // info panelində saxlanılan rənglərin limiti
         let lockedColors = [null, null, null, null, null];
         let savedColors = [];
         let currentRenderedPalette = null;
         let currentPaletteMeta = null;
+        let pendingSharedPalette = false;
         let currentHexes = [];
         let currentSearchTheme = null;
         let toastTimeout;
@@ -4160,6 +4736,7 @@ ul,ol{margin:0;padding:0;list-style:none}
             if (focalPoints.length > 0 && analysisStats) {
                 generateUIResults();
             }
+            if (typeof pibTips === 'function') pibTips();
         }
 
         document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -4207,6 +4784,10 @@ ul,ol{margin:0;padding:0;list-style:none}
             document.getElementById(viewId + '-view').classList.remove('hidden');
             // mövzunu yenidən tətbiq et — rəng səhifəsi tünd rejimdən kənarda qalır
             if (typeof applyTheme === 'function') applyTheme(themeChoice);
+            if (viewId === 'color-hierarchy' && pendingSharedPalette) {
+                pendingSharedPalette = false;
+                setTimeout(() => { try { paletteFromHash(); } catch (e) {} }, 60);
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             if (viewId === 'focal-point') {
@@ -4216,7 +4797,6 @@ ul,ol{margin:0;padding:0;list-style:none}
                 animationId = null;
             }
 
-            document.getElementById('profileBtn').classList.toggle('is-hidden', viewId !== 'color-hierarchy');
 
             isColorViewActive = (viewId === 'color-hierarchy');
             if (isColorViewActive) {
@@ -4250,6 +4830,52 @@ ul,ol{margin:0;padding:0;list-style:none}
             }, 2000);
         }
 
+        // Mətni buferə yazır. file:// və köhnə brauzerlərdə də işləyir.
+        // Nəticəni Promise<boolean> kimi qaytarır ki, düymədə təsdiq göstərək.
+        function writeClipboard(text) {
+            const legacy = () => {
+                try {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.setAttribute('readonly', '');
+                    ta.style.position = 'fixed';
+                    ta.style.top = '0'; ta.style.left = '0';
+                    ta.style.width = '1px'; ta.style.height = '1px';
+                    ta.style.padding = '0'; ta.style.border = 'none'; ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.focus(); ta.select();
+                    ta.setSelectionRange(0, text.length);
+                    const ok = document.execCommand('copy');
+                    ta.remove();
+                    return ok;
+                } catch (e) { return false; }
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                return navigator.clipboard.writeText(text)
+                    .then(() => true)
+                    .catch(() => legacy());
+            }
+            return Promise.resolve(legacy());
+        }
+
+        // Düymənin özündə qısa təsdiq göstərir
+        function flashBtn(el, ok) {
+            if (!el) return;
+            el.classList.remove('is-copied', 'is-failed');
+            void el.offsetWidth;
+            el.classList.add(ok ? 'is-copied' : 'is-failed');
+            setTimeout(() => el.classList.remove('is-copied', 'is-failed'), 1400);
+        }
+
+        window.copyHex = function(ev, hex) {
+            ev.preventDefault(); ev.stopPropagation();
+            const btn = ev.currentTarget;
+            writeClipboard(hex).then(ok => {
+                flashBtn(btn, ok);
+                if (ok) toastMsg(`<span class="font-bold">${hex}</span> — ${translations[currentLang].copied}`);
+            });
+        };
+
         function copyToClipboard(text) {
             const done = () => {
                 const toast = document.getElementById('toast');
@@ -4261,8 +4887,8 @@ ul,ol{margin:0;padding:0;list-style:none}
                 }, 2000);
             };
 
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(text).then(done).catch(done);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(done).catch(() => { writeClipboard(text).then(done); });
             } else {
                 const textArea = document.createElement("textarea");
                 textArea.value = text;
@@ -5862,11 +6488,139 @@ ul,ol{margin:0;padding:0;list-style:none}
             if (existingIndex > -1) {
                 savedColors.splice(existingIndex, 1);
             } else {
+                if (savedColors.length >= MAX_SAVED) {
+                    toastMsg(translations[currentLang].saved_full.replace('{n}', MAX_SAVED));
+                    return;
+                }
                 savedColors.push({ hex, name, pantone });
             }
             renderPalette(currentRenderedPalette);
             renderSavedColors();
+            if (pibMinimized) updatePibTag();
             try { normalizeStore(); store.colors = savedColors.slice(); storeSave(); } catch (e) {}
+        };
+
+        // Panelin yığılıb-açılması. Vəziyyət yadda saxlanılır,
+        // ona görə növbəti palitrada da yığılmış qalır.
+        let pibMinimized = false;
+        try { pibMinimized = localStorage.getItem('rdm_pib_min') === '1'; } catch (e) {}
+
+        window.togglePaletteBox = function(ev) {
+            if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+            pibMinimized = !pibMinimized;
+            try { localStorage.setItem('rdm_pib_min', pibMinimized ? '1' : '0'); } catch (e) {}
+            applyPibState();
+        };
+
+        function pibTips() {
+            const t = translations[currentLang];
+            document.querySelectorAll('#paletteInfoBox [data-tip]').forEach(el => {
+                el.title = t[el.dataset.tip] || '';
+            });
+            const mn = document.getElementById('pibMinBtn');
+            if (mn) mn.title = pibMinimized ? t.pib_open : t.pib_min;
+        }
+        window.pibTips = pibTips;
+
+        function applyPibState() {
+            const box = document.getElementById('paletteInfoBox');
+            if (!box) return;
+            box.classList.toggle('is-min', pibMinimized);
+            const btn = document.getElementById('pibMinBtn');
+            const t = translations[currentLang];
+            if (btn) btn.title = pibMinimized ? t.pib_open : t.pib_min;
+            pibTips();
+            if (pibMinimized) updatePibTag();
+        }
+
+        // Yığılmış vəziyyətdə eyni rəng dairələri qalır, yalnız
+        // başlıq, təsvir və alt düymələr gizlənir — ayrıca etiket lazım deyil.
+        function updatePibTag() {}
+
+        // yığılmış paneldə istənilən yerə klik onu açır
+        (function bindPibClick() {
+            const box = document.getElementById('paletteInfoBox');
+            if (!box) return;
+            box.addEventListener('click', (e) => {
+                if (!pibMinimized) return;
+                if (e.target.closest('#pibMinBtn')) return;
+                if (box.dataset.moved === '1') return;   // sürüşdürüldü — açma
+                if (e.target.closest('.pib-dot')) return; // rəngə klik öz işini görür
+                togglePaletteBox(e);
+            });
+        })();
+
+        // ============================================================
+        //  PALİTRANI LİNKLƏ PAYLAŞMA
+        //  Palitra ünvanın içində kodlaşdırılır — server tələb olunmur.
+        //  Format:  #p=173E6A-00BCD4-F1C40F&t=Okean
+        // ============================================================
+        function paletteToHash() {
+            if (!currentHexes || !currentHexes.length) return '';
+            const p = currentHexes.map(h => h.replace('#', '').toUpperCase()).join('-');
+            const theme = (currentRenderedPalette && currentRenderedPalette.theme) || '';
+            return '#p=' + p + (theme ? '&t=' + encodeURIComponent(theme) : '');
+        }
+
+        function paletteShareURL() {
+            const base = location.href.split('#')[0];
+            return base + paletteToHash();
+        }
+
+        // Ünvandakı palitranı oxuyur; tapılmasa false qaytarır
+        function paletteFromHash() {
+            let raw = '';
+            try { raw = window.location.hash || ''; } catch (e) { return false; }
+            if (raw.indexOf('p=') < 0) return false;
+
+            const params = {};
+            raw.replace(/^#/, '').split('&').forEach(pair => {
+                const i = pair.indexOf('=');
+                if (i > 0) params[pair.slice(0, i)] = pair.slice(i + 1);
+            });
+            const list = (params.p || '').split('-')
+                .map(x => x.trim().toUpperCase())
+                .filter(x => /^[0-9A-F]{6}$/.test(x))
+                .map(x => '#' + x);
+            if (list.length < 2) return false;
+
+            const capped = list.slice(0, MAX_PALETTE);
+            let theme = '';
+            try { theme = decodeURIComponent(params.t || ''); } catch (e) { theme = params.t || ''; }
+
+            paletteSize = capped.length;
+            lockedColors = capped.map(hex => ({
+                hex: hex, name: colorName(hex, currentLang), pantone: nearestPantone(hex)
+            }));
+            currentHexes = capped.slice();
+            const meta = resolveTheme(theme || null);
+            currentPaletteMeta = meta;
+            if (theme) {
+                meta.theme = Object.assign({}, meta.theme, { name: { az: theme, en: theme, ru: theme } });
+                meta.label = theme;
+            }
+            renderPalette(buildPaletteData(meta, currentHexes));
+            return true;
+        }
+
+        window.sharePalette = function(ev) {
+            if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+            const t = translations[currentLang];
+            const url = paletteShareURL();
+            if (!url || url.indexOf('#p=') < 0) return;
+            try { history.replaceState(null, '', paletteToHash()); } catch (e) {}
+
+            const btn = ev && ev.currentTarget;
+            // mobil cihazda sistem paylaşma pəncərəsi
+            if (navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+                navigator.share({ title: t.share_title, text: t.share_text, url: url })
+                    .catch(() => writeClipboard(url).then(ok => { flashBtn(btn, ok); if (ok) toastMsg(t.share_copied); }));
+                return;
+            }
+            writeClipboard(url).then(ok => {
+                flashBtn(btn, ok);
+                if (ok) toastMsg(t.share_copied);
+            });
         };
 
         // Rəng kodlarını daim göstərmək rejimi
@@ -5908,50 +6662,55 @@ ul,ol{margin:0;padding:0;list-style:none}
         };
 
         function renderSavedColors() {
-            const section = document.getElementById('savedColorsSection');
             const list = document.getElementById('savedColorsList');
-            if (savedColors.length === 0) {
-                section.classList.add('hidden');
-                return;
-            }
-            section.classList.remove('hidden');
+            const hint = document.querySelector('.pib-hint');
+            if (!list) return;
+            const t = translations[currentLang];
+
+            if (hint) hint.style.display = savedColors.length ? '' : 'none';
             list.innerHTML = '';
-            savedColors.forEach((c, index) => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'relative group cursor-pointer flex items-center justify-center';
+
+            savedColors.forEach((c) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'pib-dot';
 
                 const btn = document.createElement('button');
-                btn.className = 'w-7 h-7 rounded-full shadow-sm border border-slate-200 transition-transform group-hover:scale-105';
+                btn.className = 'pib-dot-c';
                 btn.style.backgroundColor = c.hex;
-                btn.title = `${c.name} (${c.hex}) — ${translations[currentLang].add_to_palette}`;
+                btn.title = `${c.name} (${c.hex}) — ${t.add_to_palette}`;
+                btn.onclick = (e) => { e.stopPropagation(); addSavedToPalette(c.hex, e); };
 
-                const delBtn = document.createElement('button');
-                delBtn.className = 'absolute -top-1.5 -right-1.5 bg-white text-rose-500 rounded-full w-4 h-4 flex items-center justify-center shadow-md border border-slate-100 opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-50 hover:scale-110 z-10 cursor-pointer';
-                delBtn.innerHTML = '<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>';
-                delBtn.title = translations[currentLang].remove_word;
-
-                btn.onclick = (e) => {
+                const del = document.createElement('button');
+                del.className = 'pib-dot-x';
+                del.title = t.remove_word;
+                del.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+                del.onclick = (e) => {
                     e.stopPropagation();
-                    addSavedToPalette(c.hex, e);
-                };
-
-                delBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    savedColors.splice(index, 1);
+                    const i2 = savedColors.findIndex(x => x.hex === c.hex);
+                    if (i2 > -1) savedColors.splice(i2, 1);
                     renderSavedColors();
                     if (currentRenderedPalette) renderPalette(currentRenderedPalette);
+                    if (pibMinimized) updatePibTag();
+                    try { normalizeStore(); store.colors = savedColors.slice(); storeSave(); } catch (e3) {}
                 };
 
-                wrapper.appendChild(btn);
-                wrapper.appendChild(delBtn);
-                list.appendChild(wrapper);
+                wrap.appendChild(btn);
+                wrap.appendChild(del);
+                list.appendChild(wrap);
             });
         }
 
         function renderPalette(paletteData) {
             if (!paletteData) return;
             currentRenderedPalette = paletteData;
+            // konteynerin fonu palitranın orta rəngi olur — kənar tikişlərdə
+            // tünd səhifə fonu görünməsin deyə
+            try {
+                const mid = paletteData.colors[Math.floor(paletteData.colors.length / 2)];
+                if (mid) document.getElementById('paletteContainer').style.backgroundColor = mid.hex;
+            } catch (e) {}
             setTimeout(applyAlwaysCodes, 0);
+            setTimeout(applyPibState, 0);
             const container = document.getElementById('paletteContainer');
             document.getElementById('paletteTheme').innerText = paletteData.theme;
             document.getElementById('paletteMood').innerText = paletteData.mood;
@@ -6076,8 +6835,22 @@ ul,ol{margin:0;padding:0;list-style:none}
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 8v5M12 17v.01"/><circle cx="12" cy="12" r="9"/></svg>
                             </span>
                             <button class="hex-copy ${textColor}" title="${t.copy_btn}"
-                                onclick="event.stopPropagation(); copyToClipboard('${color.hex}')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>
+                                onmousedown="event.preventDefault()"
+                                onclick="copyHex(event, '${color.hex}')">
+                                <svg class="hc-main" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>
+                                <svg class="hc-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg>
+                            </button>
+                            <button class="hex-copy is-figma ${textColor}" title="${t.ex_figma_one}"
+                                onmousedown="event.preventDefault()"
+                                onclick="copyOneForFigma(event, '${color.hex}')">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8.5 2h3.5v5H8.5a2.5 2.5 0 010-5z"/>
+                                    <path d="M12 2h3.5a2.5 2.5 0 010 5H12V2z"/>
+                                    <path d="M8.5 7.5H12v5H8.5a2.5 2.5 0 010-5z"/>
+                                    <path d="M15.5 7.5a2.5 2.5 0 010 5 2.5 2.5 0 010-5z"/>
+                                    <path d="M8.5 13H12v2.5a2.5 2.5 0 11-3.5-2.5z"/>
+                                </svg>
+                                <svg class="hc-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg>
                             </button>
                         </div>
 
@@ -6840,6 +7613,255 @@ ul,ol{margin:0;padding:0;list-style:none}
                     ${inRange ? '' : `<button class="ty-rec-apply" onclick="tyApplySize(${mid})">${t.ty_rec_apply.replace('{v}', mid)}</button>`}
                 </div>`;
         }
+
+        // ============================================================
+        //  PALİTRA İXRACI — Figma, kod və fayl formatları
+        // ============================================================
+
+        function exColors() {
+            const p = currentRenderedPalette;
+            if (!p || !p.colors) return [];
+            return p.colors.map(c => ({ hex: c.hex.toUpperCase(), name: c.name || colorName(c.hex, currentLang) }));
+        }
+
+        function exSlug(x) {
+            return String(x).toLowerCase()
+                .replace(/[əğıöşüç]/g, m => ({ 'ə': 'e', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u', 'ç': 'c' }[m]))
+                .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'color';
+        }
+
+        // Figma kətana yapışdırılan SVG — hər rəng ayrıca adlandırılmış çərçivə olur
+        function exFigmaSVG() {
+            const cs = exColors();
+            if (!cs.length) return '';
+            const W = 220, H = 300, GAP = 24;
+            const total = cs.length * W + (cs.length - 1) * GAP;
+            const esc2 = (x) => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const items = cs.map((c, i) => {
+                const x = i * (W + GAP);
+                const ink = contrastRatio(c.hex, '#FFFFFF') >= contrastRatio(c.hex, '#000000') ? '#FFFFFF' : '#0F172A';
+                return `<g id="${esc2(c.name)}">
+    <rect x="${x}" y="0" width="${W}" height="${H}" rx="16" fill="${c.hex}"/>
+    <text x="${x + 20}" y="${H - 54}" font-family="Inter, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="${ink}">${esc2(c.name)}</text>
+    <text x="${x + 20}" y="${H - 28}" font-family="Menlo, monospace" font-size="20" font-weight="700" fill="${ink}">${c.hex}</text>
+  </g>`;
+            }).join('\n  ');
+            return `<svg xmlns="http://www.w3.org/2000/svg" width="${total}" height="${H}" viewBox="0 0 ${total} ${H}">
+  ${items}
+</svg>`;
+        }
+
+        function exCSS() {
+            const cs = exColors();
+            const seen = {};
+            const lines = cs.map((c, i) => {
+                let k = exSlug(c.name);
+                if (seen[k]) k = k + '-' + (++seen[k]); else seen[k] = 1;
+                return `  --color-${k}: ${c.hex};`;
+            });
+            return ':root {\n' + lines.join('\n') + '\n}';
+        }
+
+        function exTailwind() {
+            const cs = exColors();
+            const seen = {};
+            const lines = cs.map(c => {
+                let k = exSlug(c.name);
+                if (seen[k]) k = k + '-' + (++seen[k]); else seen[k] = 1;
+                return `        '${k}': '${c.hex}',`;
+            });
+            return 'module.exports = {\n  theme: {\n    extend: {\n      colors: {\n' + lines.join('\n') + '\n      }\n    }\n  }\n}';
+        }
+
+        // Tokens Studio (Figma plugini) üçün JSON
+        function exTokens() {
+            const cs = exColors();
+            const out = {};
+            const seen = {};
+            cs.forEach(c => {
+                let k = exSlug(c.name);
+                if (seen[k]) k = k + '-' + (++seen[k]); else seen[k] = 1;
+                out[k] = { value: c.hex, type: 'color' };
+            });
+            return JSON.stringify({ palette: out }, null, 2);
+        }
+
+        function exPlain() {
+            return exColors().map(c => `${c.hex}  ${c.name}`).join('\n');
+        }
+
+        // Tək rəngi Figma üçün kopyalayır — kətana çərçivə kimi yapışdırılır
+        window.copyOneForFigma = function(ev, hex) {
+            if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+            const btn = ev && ev.currentTarget;
+            const t = translations[currentLang];
+            const H = hex.toUpperCase();
+            const nm = colorName(H, currentLang);
+            const ink = contrastRatio(H, '#FFFFFF') >= contrastRatio(H, '#000000') ? '#FFFFFF' : '#0F172A';
+            const e2 = (x) => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="300" viewBox="0 0 220 300">
+  <g id="${e2(nm)}">
+    <rect width="220" height="300" rx="16" fill="${H}"/>
+    <text x="20" y="246" font-family="Inter, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="${ink}">${e2(nm)}</text>
+    <text x="20" y="272" font-family="Menlo, monospace" font-size="20" font-weight="700" fill="${ink}">${H}</text>
+  </g>
+</svg>`;
+            writeClipboard(svg).then(ok => {
+                flashBtn(btn, ok);
+                if (ok) toastMsg(`<span class="font-bold">${H}</span> — ${t.ex_figma_done}`);
+            });
+        };
+
+        window.openExport = function() {
+            const t = translations[currentLang];
+            const cs = exColors();
+            if (!cs.length) return;
+
+            const top = [
+                { k: 'link', tone: '#059669',
+                  icon: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>',
+                  title: t.share_link, desc: t.share_link_d, get: paletteShareURL },
+                { k: 'svg', tone: '#0891b2',
+                  icon: '<path d="M12 16V4m0 0L8 8m4-4l4 4M4 20h16"/>',
+                  title: 'SVG', desc: t.ex_svg_d, download: true },
+                { k: 'text', tone: '#64748b',
+                  icon: '<path d="M5 6h14M5 12h14M5 18h9"/>',
+                  title: t.ex_text, desc: t.ex_text_d, get: exPlain },
+                { k: 'figma', tone: '#a259ff',
+                  icon: '<path d="M8.5 2h3.5v5H8.5a2.5 2.5 0 010-5z" fill="currentColor" stroke="none"/><path d="M12 2h3.5a2.5 2.5 0 010 5H12V2z" fill="currentColor" stroke="none"/><path d="M8.5 7.5H12v5H8.5a2.5 2.5 0 010-5z" fill="currentColor" stroke="none"/><path d="M15.5 7.5a2.5 2.5 0 010 5 2.5 2.5 0 010-5z" fill="currentColor" stroke="none"/><path d="M8.5 13H12v2.5a2.5 2.5 0 11-3.5-2.5z" fill="currentColor" stroke="none"/>',
+                  title: t.ex_figma, desc: t.ex_figma_d, get: exFigmaSVG }
+            ];
+            const rest = [
+                { k: 'css', icon: '<path d="M8 6L3 12l5 6M16 6l5 6-5 6"/>', title: 'CSS', desc: t.ex_css_d, get: exCSS },
+                { k: 'tw', icon: '<path d="M4 12c1.5-4 4-6 8-6 3 0 4.5 1.5 5.5 3M4 18c1.5-4 4-6 8-6 3 0 4.5 1.5 5.5 3"/>', title: 'Tailwind', desc: t.ex_tw_d, get: exTailwind },
+                { k: 'tokens', icon: '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3zM12 12l8-4.5M12 12v9M12 12L4 7.5"/>', title: 'Tokens Studio', desc: t.ex_tokens_d, get: exTokens }
+            ];
+            const items = top.concat(rest);
+
+            document.getElementById('exportTop').innerHTML = top.map(it => `
+                <button class="ex-tile" data-k="${it.k}" style="--tone:${it.tone}">
+                    <span class="ex-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${it.icon}</svg></span>
+                    <b>${it.title}</b>
+                    <em>${it.desc}</em>
+                    <span class="ex-act">${it.download ? t.ex_dl : t.ex_copy}</span>
+                </button>`).join('');
+
+            document.getElementById('exportList').innerHTML = rest.map(it => `
+                <button class="ex-card" data-k="${it.k}">
+                    <span class="ex-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${it.icon}</svg></span>
+                    <span class="ex-body"><b>${it.title}</b><em>${it.desc}</em></span>
+                    <span class="ex-act">${t.ex_copy}</span>
+                </button>`).join('');
+
+            document.querySelectorAll('#exportTop .ex-tile, #exportList .ex-card').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const it = items.find(x => x.k === btn.dataset.k);
+                    const act = btn.querySelector('.ex-act');
+                    if (it.download) {
+                        downloadSVG(currentRenderedPalette.theme, cs.map(c => c.hex));
+                        act.textContent = t.ex_done;
+                    } else {
+                        const txt = it.get();
+                        const done = await writeClipboard(txt);
+                        act.textContent = done ? t.ex_done : t.ex_fail;
+                    }
+                    btn.classList.add('is-done');
+                    setTimeout(() => {
+                        act.textContent = it.download ? t.ex_dl : t.ex_copy;
+                        btn.classList.remove('is-done');
+                    }, 1800);
+                });
+            });
+
+            document.getElementById('exportModal').classList.remove('is-hidden');
+        };
+
+        (function bindExport() {
+            const m = document.getElementById('exportModal');
+            if (!m) return;
+            document.getElementById('exportClose').addEventListener('click', () => m.classList.add('is-hidden'));
+            m.addEventListener('click', (e) => { if (e.target === m) m.classList.add('is-hidden'); });
+        })();
+
+        // ============================================================
+        //  İDEYA GÖNDƏRMƏ — e-poçta yönləndirmə
+        // ============================================================
+        // FormSubmit.co pulsuz xidmətdir, server tələb etmir.
+        // İLK göndərişdən sonra e-poçtunuza təsdiq linki gələcək — onu açın.
+        // Sonra spamdan qorunmaq üçün aşağıdakı ünvanı FormSubmit-in verdiyi
+        // gizli açarla əvəz edin:  https://formsubmit.co/ajax/xxxxxxxxxxxx
+        const IDEA_ENDPOINT = 'https://formsubmit.co/ajax/emiliance.ismailov@gmail.com';
+        const IDEA_MAILTO = 'emiliance.ismailov@gmail.com';
+
+        window.openIdea = function() {
+            document.getElementById('ideaModal').classList.remove('is-hidden');
+            setTimeout(() => document.getElementById('ideaText').focus(), 120);
+        };
+
+        (function setupIdea() {
+            const m = document.getElementById('ideaModal');
+            if (!m) return;
+            const txt = document.getElementById('ideaText');
+            const err = document.getElementById('ideaError');
+            const ok = document.getElementById('ideaOk');
+            const btn = document.getElementById('ideaSend');
+
+            const close = () => m.classList.add('is-hidden');
+            document.getElementById('ideaClose').addEventListener('click', close);
+            document.getElementById('ideaCancel').addEventListener('click', close);
+            m.addEventListener('click', (e) => { if (e.target === m) close(); });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !m.classList.contains('is-hidden')) close();
+            });
+
+            txt.addEventListener('input', () => {
+                document.getElementById('ideaCount').textContent = txt.value.length + ' / 1200';
+            });
+
+            btn.addEventListener('click', async () => {
+                const t = translations[currentLang];
+                const body = txt.value.trim();
+                const name = document.getElementById('ideaName').value.trim();
+                const mail = document.getElementById('ideaMail').value.trim();
+
+                err.style.display = 'none'; ok.style.display = 'none';
+                if (body.length < 10) {
+                    err.textContent = t.idea_e_short; err.style.display = 'block'; return;
+                }
+                if (mail && !/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(mail)) {
+                    err.textContent = t.idea_e_mail; err.style.display = 'block'; return;
+                }
+
+                btn.disabled = true; btn.textContent = t.idea_sending;
+                try {
+                    const r = await fetch(IDEA_ENDPOINT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                        body: JSON.stringify({
+                            _subject: 'RDM — yeni ideya',
+                            _template: 'table',
+                            ad: name || '—',
+                            epoct: mail || '—',
+                            dil: currentLang,
+                            ideya: body
+                        })
+                    });
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    ok.textContent = t.idea_ok; ok.style.display = 'block';
+                    txt.value = ''; document.getElementById('ideaCount').textContent = '0 / 1200';
+                    document.getElementById('ideaName').value = '';
+                    document.getElementById('ideaMail').value = '';
+                    setTimeout(close, 2200);
+                } catch (e) {
+                    // xidmət cavab vermirsə — poçt proqramı ilə göndərmə
+                    err.innerHTML = t.idea_e_send +
+                        ` <a href="mailto:${IDEA_MAILTO}?subject=${encodeURIComponent('RDM — ideya')}&body=${encodeURIComponent(body)}" class="idea-alt">${t.idea_mailto}</a>`;
+                    err.style.display = 'block';
+                } finally {
+                    btn.disabled = false; btn.textContent = t.idea_send;
+                }
+            });
+        })();
 
         window.openWcag = function(e) {
             if (e) e.stopPropagation();
@@ -7700,6 +8722,7 @@ ul,ol{margin:0;padding:0;list-style:none}
                         <p class="sf-h">${t.footer_contact}</p>
                         <p class="sf-role">${t.footer_role}</p>
                         <p class="sf-author">Emil Ismailov</p>
+
                         <div class="sf-socials">
                             <a class="sf-social" href="${BEHANCE_URL}" target="_blank" rel="noopener noreferrer">
                                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.2 6.4c1.1 0 2 .1 2.7.4.7.2 1.3.6 1.7 1 .4.4.7.9.9 1.4.2.6.3 1.2.3 1.9 0 .8-.2 1.4-.5 1.9-.4.5-.9.9-1.5 1.3.9.3 1.6.8 2 1.4.5.7.7 1.5.7 2.4 0 .8-.1 1.4-.4 2-.3.6-.7 1-1.2 1.4-.5.4-1.1.6-1.8.8-.7.2-1.4.3-2.1.3H1V6.4h7.2zm-.4 6.2c.6 0 1.1-.1 1.5-.4.4-.3.6-.8.6-1.4 0-.4-.1-.7-.2-.9-.1-.3-.3-.4-.5-.6-.2-.1-.5-.2-.8-.3-.3 0-.6-.1-.9-.1H4.3v3.7h3.5zm.2 6.5c.3 0 .7 0 1-.1.3-.1.6-.2.8-.4.2-.2.4-.4.6-.7.1-.3.2-.6.2-1.1 0-.8-.2-1.4-.7-1.7-.4-.4-1.1-.5-1.8-.5H4.3v4.5H8zM17.4 18.8c.4.4 1.1.7 1.9.7.6 0 1.1-.2 1.6-.5.4-.3.7-.6.8-1h2.2c-.4 1.1-.9 1.9-1.7 2.4-.7.5-1.7.7-2.8.7-.8 0-1.4-.1-2.1-.4-.6-.2-1.1-.6-1.5-1-.4-.5-.7-1-.9-1.6-.2-.6-.3-1.3-.3-2.1s.1-1.4.4-2.1c.2-.6.6-1.2 1-1.6.4-.5.9-.8 1.5-1.1.6-.3 1.3-.4 2-.4.8 0 1.5.2 2.1.5.6.3 1.1.7 1.5 1.3.4.5.7 1.1.8 1.8.2.7.2 1.4.2 2.1h-7c0 .9.3 1.6.7 2.1zm3.4-5.5c-.4-.4-.9-.6-1.6-.6-.5 0-.9.1-1.2.2-.3.2-.6.4-.8.6-.2.2-.3.5-.4.8-.1.3-.1.5-.1.7h4.3c-.1-.7-.3-1.3-.6-1.7zM15.9 7.7h5.4v1.3h-5.4V7.7z"/></svg>
@@ -7710,6 +8733,10 @@ ul,ol{margin:0;padding:0;list-style:none}
                                 @emils.mv
                             </a>
                         </div>
+                        <button class="sf-idea" onclick="openIdea()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7V17h8v-2.3A7 7 0 0012 2z"/></svg>
+                            ${t.idea_btn}
+                        </button>
                     </div>
                 </div>
 
@@ -8535,11 +9562,6 @@ ul,ol{margin:0;padding:0;list-style:none}
             return m && !m.classList.contains('is-hidden');
         }
 
-        document.getElementById('visualiseBtn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            renderVisuals();
-            document.getElementById('vizModal').classList.remove('is-hidden');
-        });
         document.getElementById('vizCloseBtn').addEventListener('click', () => {
             document.getElementById('vizModal').classList.add('is-hidden');
         });
@@ -8971,12 +9993,32 @@ ${rows}
         renderSavedColors();
         renderFooters();
         updateStaticTexts();
+        pibTips();
         mountThemeButtons();
+
+        // Ünvanda palitra varsa — rəng səhifəsini açıb onu göstər
+        (function openSharedPalette() {
+            let h = '';
+            try { h = window.location.hash || ''; } catch (e) { return; }
+            if (h.indexOf('p=') < 0) return;
+            pendingSharedPalette = true;
+            setTimeout(() => { try { switchView('color-hierarchy'); } catch (e) {} }, 260);
+        })();
         applyTheme(store.theme === 'dark' ? 'dark' : 'light');
         bindModal('presetModal', 'presetsBtn', 'presetCloseBtn', () => { presetShown = 60; renderPresets(); });
-        bindModal('profileModal', 'profileBtn', 'profileCloseBtn', renderProfile);
+        (function bindProfileClose() {
+            const m = document.getElementById('profileModal');
+            if (!m) return;
+            document.getElementById('profileCloseBtn').addEventListener('click', () => m.classList.add('is-hidden'));
+            m.addEventListener('click', (e) => { if (e.target === m) m.classList.add('is-hidden'); });
+        })();
 
         document.getElementById('savePaletteBtn').addEventListener('click', (e) => { e.stopPropagation(); quickSavePalette(); });
+        document.getElementById('myColorsBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const m = document.getElementById('profileModal');
+            if (m) { m.classList.remove('is-hidden'); renderProfile(); }
+        });
         document.getElementById('presetSearch').addEventListener('input', () => { presetShown = 60; renderPresets(); });
         document.getElementById('presetMore').addEventListener('click', () => { presetShown += 60; renderPresets(); });
         document.querySelectorAll('.preset-chip[data-size]').forEach(chip => {
@@ -9187,6 +10229,7 @@ ${rows}
                 if (e.target.closest('button')) return;
 
                 isDragging = true;
+                element.dataset.moved = '0';
                 const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
                 const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
 
@@ -9209,6 +10252,10 @@ ${rows}
                 isDragging = false;
                 element.classList.add('cursor-grab');
                 element.classList.remove('cursor-grabbing');
+                // sürüşdürmədən sonrakı klik paneli açmasın
+                if (element.dataset.moved === '1') {
+                    setTimeout(() => { element.dataset.moved = '0'; }, 220);
+                }
             };
 
             const dragMove = (e) => {
@@ -9220,6 +10267,7 @@ ${rows}
 
                 const dx = clientX - startX;
                 const dy = clientY - startY;
+                if (Math.abs(dx) > 4 || Math.abs(dy) > 4) element.dataset.moved = '1';
 
                 let newLeft = initialLeft + dx;
                 let newTop = initialTop + dy;
