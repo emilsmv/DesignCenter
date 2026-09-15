@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html lang="az">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rasional Dizayn Mərkəzi — Fokal Nöqtə və Rəng Alətləri</title>
-    <meta name="description" content="Şəklinizin fokal nöqtələrini kompozisiya analizi ilə tapın, harmonik rəng palitraları yaradın. Pulsuz onlayn dizayn alətləri.">
-    <meta name="theme-color" content="#173e6a">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23173e6a'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%2300bcd4'/%3E%3C/svg%3E">
+    <title>what is seen first?</title>
+    <meta name="description" content="Free design tools that check colour, focus and composition decisions on a measurable basis — right in your browser.">
+    <meta name="theme-color" content="#0d0d0f">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%2300C5DB'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ffffff'/%3E%3Ccircle cx='50' cy='50' r='30' fill='%2300C5DB'/%3E%3C/svg%3E">
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Rasional Dizayn Mərkəzi">
-    <meta property="og:description" content="Fokal nöqtə analizi və rəng iyerarxiyası alətləri — birbaşa brauzerdə.">
-    <meta property="og:locale" content="az_AZ">
+    <meta property="og:title" content="what is seen first? — Seenly.design">
+    <meta property="og:description" content="Colour hierarchy, typography, focal point, format and logo tools — free, no sign-up, in your browser.">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Seenly.design">
     <meta name="twitter:card" content="summary">
 
     <!-- Tailwind CDN əvəzinə yalnız bu saytda işlənən siniflər daxil edilib.
@@ -432,10 +434,38 @@ ul,ol{margin:0;padding:0;list-style:none}
 }
     </style>
     <style>
-        .fade-in { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* ============================================================
+           SƏHİFƏ KEÇİDİ — səhifə aşağıdan qalxır, məzmun pillələrlə açılır.
+           Yalnız opacity və transform işlənir → GPU-da, layout hesablanmır.
+           ============================================================ */
+        /* Səhifə çərçivəsi — YALNIZ opacity/transform (ucuz, GPU-da) */
+        .view-in { animation: viewIn .42s cubic-bezier(.16, 1, .3, 1) both; }
+        @keyframes viewIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        /* Başlıq zolağı — yuxarıdan, blursuz (üzərində sticky fon var) */
+        .view-in .sticky,
+        .view-in > .sticky,
+        .view-in .sn-top { animation: viewBar .45s cubic-bezier(.16, 1, .3, 1) both; }
+        @keyframes viewBar {
+            from { opacity: 0; transform: translateY(-12px); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        /* Məzmun bloku — sadəcə yumşaq açılış, blursuz */
+        .view-in .sn-hero,
+        .view-in .w-full.max-w-6xl {
+            animation: viewBody .5s cubic-bezier(.16, 1, .3, 1) .06s both;
+        }
+        @keyframes viewBody {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .view-in, .view-in .sticky, .view-in .sn-top,
+            .view-in .sn-hero, .view-in .w-full.max-w-6xl { animation: none; }
         }
         @keyframes drawRing {
             0% { stroke-dasharray: 0, 100; }
@@ -527,6 +557,22 @@ ul,ol{margin:0;padding:0;list-style:none}
             font-family: var(--font-display);
         }
         .sn-title span { display: block; white-space: nowrap; }
+        /* yazma effekti — kursor mətnin sonunda yanıb-sönür */
+        /* Kursor sətir qutusunun hündürlüyünə TƏSİR ETMƏMƏLİDİR,
+           yoxsa ikinci sətir hündürləşir və aşağıdakı sətir aşağı düşür.
+           Ona görə mütləq yerləşdirilir. */
+        .sn-l2 .sn-type { display: inline; position: relative; }
+        .sn-l2 .sn-type-txt { display: inline; }
+        .sn-caret {
+            position: absolute; left: 100%; bottom: .06em;
+            width: .055em; height: .68em; margin-left: .06em;
+            background: #00C5DB; border-radius: .02em; pointer-events: none;
+            animation: caretBlink 1.05s steps(1, end) infinite;
+            transition: opacity .4s ease;
+        }
+        .sn-caret.is-out { opacity: 0; animation: none; }
+        @keyframes caretBlink { 0%, 48% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { .sn-caret { display: none; } }
         .sn-l1 {
             font-size: clamp(2.6rem, 13.1vw, 9.35rem); font-weight: 200;
             line-height: .98; letter-spacing: -.035em; color: #231F20;
@@ -553,7 +599,9 @@ ul,ol{margin:0;padding:0;list-style:none}
             gap: 0 1.2rem; width: 100%; min-height: 5.5rem;
             padding: .4rem 0; border: 0; border-bottom: 1px solid #EDE7EC;
             background: none; cursor: pointer; text-align: left; isolation: isolate;
-            transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1), filter .7s ease;
+            transition: opacity 1.05s cubic-bezier(.16,1,.3,1),
+                        transform 1.05s cubic-bezier(.16,1,.3,1),
+                        filter .95s cubic-bezier(.33,1,.5,1);
         }
         /* maus üstünə gələndə soldan sürüşən yüngül fon */
         /* soldan açılan yumşaq fon */
@@ -577,7 +625,7 @@ ul,ol{margin:0;padding:0;list-style:none}
         .trow:hover::after { transform: scaleY(1); }
         /* JS varsa sətirlər əvvəlcə gizlədilir və növbə ilə açılır.
            JS işləməsə mətn hər halda görünür — «is-out» heç vaxt əlavə olunmur. */
-        .trow.is-out { opacity: 0; transform: translateY(22px); filter: blur(6px); }
+        .trow.is-out { opacity: 0; transform: translateY(26px); filter: blur(12px); }
         .trow-num {
             font-family: var(--font-display);
             font-size: clamp(1.5rem, 4vw, 2.85rem); font-weight: 800;
@@ -1110,6 +1158,11 @@ ul,ol{margin:0;padding:0;list-style:none}
             position: relative; z-index: 2;   /* sticky giriş panelinin üstündə qalsın */
             border-top: 1px solid var(--hairline); margin-top: 3.5rem; padding: 2.5rem 0 2rem;
             background: var(--page-bg);
+        }
+        /* Ana səhifədə footer hero və menyu ilə eyni xətdən başlayır (maket: 91 px) */
+        #home-view .site-footer {
+            padding-left: clamp(1.25rem, 8vw, 5.7rem);
+            padding-right: clamp(1.25rem, 8vw, 5.7rem);
         }
         .sf-inner { display: grid; grid-template-columns: 1fr; gap: 2.4rem; }
         @media (min-width: 760px) { .sf-inner { grid-template-columns: 1.55fr 1fr 1fr; } }
@@ -2331,6 +2384,164 @@ ul,ol{margin:0;padding:0;list-style:none}
         #focalReload { margin-bottom: 0; }
         [data-theme="dark"] .reload-pill { background: #161618; border-color: #2b2b2f; color: #cbd5e1; }
 
+        /* ============================================================
+           QRADİENT ANALİZATORU
+           ============================================================ */
+        /* ============================================================
+           QRADİENT PALİTRASI — Rəng İyerarxiyasının qradient qarşılığı
+           ============================================================ */
+        #gradContainer { contain: layout; position: relative; }
+        /* Sətir — tam en, hündürlük paylaşılır */
+        .gd-col {
+            flex: 1 1 0%;
+            position: relative; display: flex; align-items: center; justify-content: space-between;
+            gap: 1.5rem; flex-wrap: wrap;
+            min-height: 8rem; padding: 1.4rem clamp(1.2rem, 4vw, 3rem);
+            margin-top: -1px; cursor: pointer; overflow: hidden;
+            transition: flex-grow .6s cubic-bezier(.22, 1, .36, 1);
+        }
+        .gd-col:first-child { margin-top: 0; }
+        @media (min-width: 768px) {
+            #gradContainer { height: 100vh; max-height: 100vh; overflow: hidden; }
+            .gd-col { min-height: 0; }
+            .gd-col:hover { flex-grow: 1.6; }
+            .gd-acts { opacity: 0; transform: translateX(.6rem); }
+            .gd-col:hover .gd-acts { opacity: 1; transform: none; }
+        }
+        /* ilk sətir üst zolağın altında qalmasın */
+        .gd-col:first-child { padding-top: 5.5rem; }
+        .gd-col:last-child { padding-bottom: 5rem; }
+
+        /* fon ayrıca qatdadır — liquify filtri yalnız ona tətbiq olunur */
+        .gd-fill { position: absolute; inset: 0; z-index: 0; }
+        .gd-head, .gd-right { position: relative; z-index: 1; }
+
+        .gd-on-dark { color: #fff; }
+        .gd-on-light { color: #0f172a; }
+
+        .gd-head { min-width: 0; }
+        .gd-name {
+            font-family: var(--font-display);
+            font-size: clamp(1.3rem, 3vw, 2.6rem); font-weight: 800;
+            letter-spacing: -.035em; line-height: 1.05; white-space: nowrap;
+        }
+        .gd-meta {
+            margin-top: .3rem; font-size: .66rem; font-weight: 700;
+            letter-spacing: .12em; text-transform: uppercase; opacity: .6;
+        }
+        .gd-on-dark .gd-name, .gd-on-dark .gd-meta { text-shadow: 0 1px 4px rgba(0,0,0,.28); }
+
+        .gd-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-left: auto; }
+        .gd-chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+        .gd-chip {
+            padding: .32rem .62rem; border-radius: 9999px; cursor: pointer;
+            border: 0; color: inherit;
+            font-family: ui-monospace, Menlo, monospace;
+            font-size: .68rem; font-weight: 700; letter-spacing: .02em;
+            background: rgba(255,255,255,.22);
+            -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+            transition: background-color .2s ease, transform .2s ease;
+        }
+        .gd-chip:hover { background: rgba(255,255,255,.42); transform: translateY(-1px); }
+        .gd-chip.is-copied { background: #10b981 !important; color: #fff; }
+        .gd-on-light .gd-chip { background: rgba(15,23,42,.1); }
+        .gd-on-light .gd-chip:hover { background: rgba(15,23,42,.18); }
+
+        .gd-acts { display: flex; gap: .4rem; transition: opacity .3s ease, transform .4s cubic-bezier(.22,1,.36,1); }
+        .gd-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 2.2rem; height: 2.2rem; border-radius: 9999px; cursor: pointer;
+            border: 1px solid currentColor; background: rgba(255,255,255,.16);
+            color: inherit; opacity: .8;
+            transition: transform .2s ease, background-color .2s ease, opacity .2s ease;
+        }
+        .gd-btn svg { width: .95rem; height: .95rem; }
+        .gd-btn:hover { transform: scale(1.1); opacity: 1; }
+        .gd-btn.is-on { background: currentColor; }
+        .gd-btn.is-on svg { stroke: #fff; }
+        .gd-btn.is-copied { background: #10b981 !important; border-color: #10b981; }
+        .gd-on-light .gd-btn { background: rgba(255,255,255,.4); }
+
+        /* üst zolaq və alt panel */
+        /* Kitabxana şəbəkəsi */
+        .gd-lib-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem; }
+        @media (min-width: 640px) { .gd-lib-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 900px) { .gd-lib-grid { grid-template-columns: repeat(4, 1fr); } }
+        .gd-lib-item {
+            display: flex; flex-direction: column; gap: .5rem; padding: .55rem;
+            border-radius: .8rem; border: 1px solid var(--hairline); background: #fff;
+            cursor: pointer; text-align: left;
+            transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+        }
+        .gd-lib-item:hover {
+            transform: translateY(-3px); border-color: #00C5DB;
+            box-shadow: 0 10px 24px rgba(15,23,42,.1);
+        }
+        .gd-lib-bar { display: block; height: 4.2rem; border-radius: .55rem; }
+        .gd-lib-meta { display: flex; align-items: baseline; justify-content: space-between; gap: .4rem; }
+        .gd-lib-meta b { font-size: .76rem; font-weight: 800; color: #0f172a; }
+        .gd-lib-meta em { font-style: normal; font-size: .62rem; color: #94a3b8; white-space: nowrap; }
+        .gd-lib-empty { padding: 2rem; text-align: center; font-size: .85rem; color: #94a3b8; grid-column: 1 / -1; }
+        .preset-chip em { font-style: normal; opacity: .55; margin-left: .15rem; }
+        [data-theme="dark"] .gd-lib-item { background: #161618; border-color: #2b2b2f; }
+        [data-theme="dark"] .gd-lib-meta b { color: #e2e8f0; }
+
+        /* Üst zolaq: tablar, dil seçicisi — hamısı bir sətirdə, sağda */
+        .gd-top-right {
+            display: flex; align-items: center; gap: .55rem;
+            flex-wrap: wrap; margin-left: auto;
+        }
+        /* iki qrupu ayıran incə xətt */
+        .gd-sep {
+            width: 1px; height: 1.5rem; flex: 0 0 auto; margin: 0 .35rem;
+            background: rgba(255,255,255,.4);
+        }
+        @media (max-width: 720px) { .gd-sep { display: none; } }
+        /* Tab qrupunun heç bir fonu yoxdur — yalnız düymələrin özü görünür */
+        .gd-spaces {
+            background: none !important; box-shadow: none !important;
+            -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+            padding: 0; margin: 0; gap: .3rem; border: 0;
+        }
+        .gd-spaces .ads-tab,
+        [data-theme="dark"] .gd-spaces .ads-tab {
+            height: 2.5rem; padding: 0 .95rem; border: 0;
+            background: rgba(15,23,42,.8); color: rgba(255,255,255,.85);
+            font-size: .74rem; font-weight: 800;
+            -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            transition: background-color .2s ease, color .2s ease;
+        }
+        .gd-spaces .ads-tab:hover { background: rgba(15,23,42,.95); color: #fff; }
+
+        /* RƏNG FƏZASI — brend firuzəyisi ilə işarələnir */
+        .gd-spaces.is-space .ads-tab.is-on,
+        [data-theme="dark"] .gd-spaces.is-space .ads-tab.is-on {
+            background: #00C5DB; color: #04252A;
+        }
+        /* QRADİENT NÖVÜ — neytral ağ */
+        .gd-spaces.is-type .ads-tab.is-on,
+        [data-theme="dark"] .gd-spaces.is-type .ads-tab.is-on {
+            background: rgba(255,255,255,.96); color: #0f172a;
+        }
+        .gd-foot {
+            position: absolute; left: 0; right: 0; bottom: 0; z-index: 30;
+            display: flex; justify-content: center; align-items: center; gap: .5rem;
+            padding: 1.1rem; pointer-events: none;
+        }
+        .gd-next, .gd-count {
+            pointer-events: auto; display: inline-flex; align-items: center; gap: .5rem;
+            height: 2.7rem; padding: 0 1.1rem; border-radius: 9999px; cursor: pointer; border: 0;
+            background: rgba(255,255,255,.95); color: #0f172a;
+            font-size: .78rem; font-weight: 800;
+            box-shadow: 0 8px 24px rgba(15,23,42,.25);
+            -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+            transition: transform .2s ease, background-color .2s ease;
+        }
+        .gd-next svg { width: 1rem; height: 1rem; }
+        .gd-next:hover, .gd-count:hover { transform: translateY(-2px); background: #fff; }
+        .gd-count { font-size: .72rem; font-weight: 700; color: #64748b; padding: 0 .9rem; }
+        @media (max-width: 640px) { .gd-next span { display: none; } .gd-next { padding: 0 .9rem; } }
+
         /* Səhifə başlığı — loqodan ayırıcı xətlə və boşluqla ayrılır */
         .tool-title {
             position: relative; display: inline-flex; align-items: center;
@@ -2512,7 +2723,7 @@ ul,ol{margin:0;padding:0;list-style:none}
     </div>
 
     <!-- ƏSAS SƏHİFƏ (HOME VIEW) -->
-    <div id="home-view" class="home-wrap fade-in">
+    <div id="home-view" class="home-wrap">
 
         <header class="sn-top">
             <button class="sn-logo" onclick="switchView('home')">
@@ -2572,8 +2783,16 @@ ul,ol{margin:0;padding:0;list-style:none}
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 6l6 6-6 6"/></svg>
                 </span>
             </button>
-            <button class="trow" onclick="switchView('logo')">
+            <button class="trow" onclick="switchView('gradient')">
                 <span class="trow-num">05</span>
+                <span class="trow-name" data-i18n="grad_title"></span>
+                <span class="trow-desc" data-i18n="tool7_desc"></span>
+                <span class="trow-go">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 6l6 6-6 6"/></svg>
+                </span>
+            </button>
+            <button class="trow" onclick="switchView('logo')">
+                <span class="trow-num">06</span>
                 <span class="trow-name" data-i18n="logo_title"></span>
                 <span class="trow-desc" data-i18n="tool3_desc"></span>
                 <span class="trow-go">
@@ -2586,7 +2805,7 @@ ul,ol{margin:0;padding:0;list-style:none}
         </div>
 
     <!-- RƏNG İYERARXİYASI ALƏTİ -->
-    <div id="color-hierarchy-view" class="hidden fixed inset-0 z-50 bg-slate-900 fade-in flex flex-col overflow-y-auto">
+    <div id="color-hierarchy-view" class="hidden fixed inset-0 z-50 bg-slate-900 flex flex-col overflow-y-auto">
 
         <div id="colorTopBar" class="absolute top-6 left-6 right-6 z-40 flex items-start pointer-events-none gap-3 flex-wrap">
              <button onclick="switchView('home')" class="tool-logo pointer-events-auto" title="Seenly.design">
@@ -2878,8 +3097,67 @@ ul,ol{margin:0;padding:0;list-style:none}
         </div>
     </div>
 
+
+    <!-- QRADİENT PALİTRASI -->
+    <div id="gradient-view" class="hidden fixed inset-0 z-50 bg-slate-900 flex flex-col overflow-hidden">
+
+        <div id="gradTopBar" class="absolute top-0 left-0 right-0 z-30 p-4 sm:p-6 flex flex-wrap items-center gap-3 pointer-events-none">
+            <button onclick="switchView('home')" class="tool-logo pointer-events-auto" title="Seenly.design">
+                <span class="tl-dot"></span>
+                <span class="tl-word"><b>Seenly.</b><i>design</i></span>
+            </button>
+
+            <button id="gdLibBtn" class="explore-btn pointer-events-auto">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5h6v6H4zM14 5h6v6h-6zM4 15h6v4H4zM14 15h6v4h-6z"></path></svg>
+                <span data-i18n="gd_lib">Kitabxana</span>
+            </button>
+
+            <div class="gd-top-right">
+                <div class="ads-tabs gd-spaces is-space pointer-events-auto" id="gdSpace"></div>
+                <span class="gd-sep" aria-hidden="true"></span>
+                <div class="ads-tabs gd-spaces is-type pointer-events-auto" id="gdType"></div>
+                <span class="gd-sep" aria-hidden="true"></span>
+                <div class="lang-group shrink-0 pointer-events-auto" style="background:rgba(255,255,255,.92)">
+                    <button class="lang-btn is-on" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="az">AZ</button>
+                    <button class="lang-btn" data-lang="ru">RU</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="gradContainer" class="flex-grow flex flex-col w-full"></div>
+
+        <div id="gdLibModal" class="viz-modal is-hidden">
+            <div class="viz-panel">
+                <div class="viz-head">
+                    <div>
+                        <h2 data-i18n="gd_lib_title">Qradient kitabxanası</h2>
+                        <p id="gdLibCount"></p>
+                    </div>
+                    <button class="viz-close" id="gdLibClose"><span data-i18n="close_btn">Bağla</span> ✕</button>
+                </div>
+
+                <div class="preset-tools">
+                    <input id="gdLibSearch" class="pf-input" data-i18n-placeholder="gd_lib_search" placeholder="Ada görə axtar (məs: Gold)...">
+                    <div class="preset-chips" id="gdLibCats"></div>
+                </div>
+
+                <div class="gd-lib-grid" id="gdLibGrid"></div>
+            </div>
+        </div>
+
+        <div class="gd-foot" id="gdFoot">
+            <button class="gd-next" id="gdNext">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0113.7-5.7M20 12a8 8 0 01-13.7 5.7M17 3v4h-4M7 21v-4h4"/></svg>
+                <span data-i18n="gd_next">Növbəti qradientlər (Space)</span>
+            </button>
+            <button class="gd-count" id="gdCount"></button>
+        </div>
+    </div>
+
+
     <!-- TİPOQRAFİYA -->
-    <div id="type-view" class="hidden fixed inset-0 z-50 bg-white fade-in flex flex-col overflow-y-auto">
+    <div id="type-view" class="hidden fixed inset-0 z-50 bg-white flex flex-col overflow-y-auto">
         <div class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
             <div class="max-w-6xl mx-auto px-5 sm:px-6 h-16 flex items-center gap-2.5 flex-wrap">
                 <button onclick="switchView('home')" class="tool-logo" title="Seenly.design">
@@ -3022,7 +3300,7 @@ ul,ol{margin:0;padding:0;list-style:none}
     </div>
 
     <!-- BRENDİNQ BƏLƏDÇİSİ -->
-    <div id="brand-view" class="hidden fixed inset-0 z-50 bg-white fade-in flex flex-col overflow-y-auto">
+    <div id="brand-view" class="hidden fixed inset-0 z-50 bg-white flex flex-col overflow-y-auto">
         <div class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
             <div class="max-w-5xl mx-auto px-5 sm:px-6 h-16 flex items-center gap-2.5 flex-wrap">
                 <button onclick="switchView('home')" class="tool-logo" title="Seenly.design">
@@ -3048,7 +3326,7 @@ ul,ol{margin:0;padding:0;list-style:none}
     </div>
 
     <!-- LOGO AUDİTİ -->
-    <div id="logo-view" class="hidden fixed inset-0 z-50 bg-white fade-in flex flex-col overflow-y-auto">
+    <div id="logo-view" class="hidden fixed inset-0 z-50 bg-white flex flex-col overflow-y-auto">
         <div class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
             <div class="max-w-6xl mx-auto px-5 sm:px-6 h-16 flex items-center gap-2.5 flex-wrap">
                 <button onclick="switchView('home')" class="tool-logo" title="Seenly.design">
@@ -3133,7 +3411,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 
 
     <!-- ÇAP ÖLÇÜLƏRİ -->
-    <div id="print-view" class="hidden fixed inset-0 z-50 bg-white fade-in flex flex-col overflow-y-auto">
+    <div id="print-view" class="hidden fixed inset-0 z-50 bg-white flex flex-col overflow-y-auto">
         <div class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
             <div class="max-w-5xl mx-auto px-5 sm:px-6 h-16 flex items-center gap-2.5 flex-wrap">
                 <button onclick="switchView('home')" class="tool-logo" title="Seenly.design">
@@ -3205,7 +3483,7 @@ ul,ol{margin:0;padding:0;list-style:none}
     </div>
 
     <!-- FOKAL NÖQTƏ ALƏTİ -->
-    <div id="focal-point-view" class="hidden fixed inset-0 z-50 bg-white fade-in flex flex-col overflow-y-auto">
+    <div id="focal-point-view" class="hidden fixed inset-0 z-50 bg-white flex flex-col overflow-y-auto">
 
         <!-- YÜKLƏNMƏ EKRANI -->
         <div id="loadingOverlay" class="hidden absolute inset-0 z-50 bg-white/95 backdrop-blur-sm flex-col items-center justify-center">
@@ -3385,6 +3663,32 @@ ul,ol{margin:0;padding:0;list-style:none}
                 algo_std_desc: "Itti–Koch modelinə mərkəz meyli (Tatler 2007) əlavə olunur. İnsanlar şəklə baxarkən fiksasiyalar statistik olaraq mərkəzə toplaşır — foto və reklam üçün real nəticə verir.",
                 algo_dyn_desc: "Yalnız aşağıdan-yuxarı (bottom-up) saliency — mərkəz meyli tətbiq edilmir. Poster və asimmetrik kompozisiyalarda əsl kontrast mənbələrini göstərir.",
                 method_note: "Metod: Itti–Koch–Niebur (1998) saliency modeli — çoxmiqyaslı mərkəz-ətraf fərqləri (intensivlik, rəng oponentliyi, oriyentasiya), üz proxy-si və mərkəz meyli. Fiksasiyalar winner-take-all + inhibition of return ilə seçilir.",
+                gd_cat_free: "Freeform",
+                grad_mesh: "Freeform",
+                gd_lib: "Kitabxana",
+                gd_lib_title: "Qradient kitabxanası",
+                gd_lib_search: "Ada görə axtar (məs: Gold)...",
+                gd_lib_added: "sətrə əlavə olundu və kilidləndi",
+                gd_cat_metal: "Metal",
+                gd_cat_sunset: "Gün batımı",
+                gd_cat_ocean: "Okean",
+                gd_cat_nature: "Təbiət",
+                gd_cat_neon: "Neon",
+                gd_cat_pastel: "Pastel",
+                gd_cat_dark: "Tünd",
+                gd_cat_mono: "Monoxrom",
+                gd_svg: "SVG yüklə (Illustrator)",
+                gd_svg_done: "SVG faylı yükləndi",
+                gd_copied: "CSS kopyalandı",
+                gd_rotate: "Bucağı çevir",
+                gd_reroll: "Bu sütunu yenilə",
+                gd_copy_css: "CSS-i kopyala",
+                gd_stops_short: "rəng",
+                gd_cols: "sütun",
+                gd_next: "Növbəti qradientlər (Space)",
+                grad_radial: "Dairəvi",
+                grad_linear: "Xətti",
+                grad_title: "Qradient Palitrası",
                 change_image: "Başqa şəkil",
                 hero_side: "və brauzerinizdə daha çoxu",
                 saved_full: "Maksimum {n} rəng saxlaya bilərsiniz — birini silin.",
@@ -3588,7 +3892,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 
                 brand_cta: "Rəng və loqo bölmələrini hazırlamaq üçün:",
                 brand_cta_btn: "Logo Auditi →",
-                tool7_desc: "Sadə, standart və tam brendbuk — hər səviyyədə hansı səhifələr olmalıdır.",
+                tool7_desc: "Hazır qradientləri kəşf edin — Space ilə yenilənir, CSS bir kliklə.",
                 theme_dark: "Tünd rejim",
                 theme_light: "İşıqlı rejim",
                 scale_temp: "Temperatur",
@@ -3889,6 +4193,32 @@ ul,ol{margin:0;padding:0;list-style:none}
                 algo_std_desc: "Itti–Koch model plus the central fixation bias (Tatler 2007). When people look at a picture, fixations statistically cluster near the centre — realistic for photos and ads.",
                 algo_dyn_desc: "Pure bottom-up saliency with no centre bias. Reveals the real contrast sources in posters and asymmetric compositions.",
                 method_note: "Method: Itti–Koch–Niebur (1998) saliency model — multi-scale centre–surround differences (intensity, colour opponency, orientation), a face proxy and the central bias. Fixations are picked by winner-take-all with inhibition of return.",
+                gd_cat_free: "Freeform",
+                grad_mesh: "Freeform",
+                gd_lib: "Library",
+                gd_lib_title: "Gradient library",
+                gd_lib_search: "Search by name (e.g. Gold)...",
+                gd_lib_added: "added to a row and locked",
+                gd_cat_metal: "Metal",
+                gd_cat_sunset: "Sunset",
+                gd_cat_ocean: "Ocean",
+                gd_cat_nature: "Nature",
+                gd_cat_neon: "Neon",
+                gd_cat_pastel: "Pastel",
+                gd_cat_dark: "Dark",
+                gd_cat_mono: "Mono",
+                gd_svg: "Download SVG (Illustrator)",
+                gd_svg_done: "SVG file downloaded",
+                gd_copied: "CSS copied",
+                gd_rotate: "Rotate the angle",
+                gd_reroll: "Reroll this column",
+                gd_copy_css: "Copy CSS",
+                gd_stops_short: "colours",
+                gd_cols: "columns",
+                gd_next: "Next gradients (Space)",
+                grad_radial: "Radial",
+                grad_linear: "Linear",
+                grad_title: "Gradient Palette",
                 change_image: "Change image",
                 hero_side: "& much more in your browser",
                 saved_full: "You can keep up to {n} colours — remove one first.",
@@ -4092,7 +4422,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 
                 brand_cta: "To prepare the colour and logo sections:",
                 brand_cta_btn: "Logo Audit →",
-                tool7_desc: "Basic, standard and full brandbook — what belongs in each tier.",
+                tool7_desc: "Explore ready gradients — Space for a new set, CSS in one click.",
                 theme_dark: "Dark mode",
                 theme_light: "Light mode",
                 scale_temp: "Temperature",
@@ -4393,6 +4723,32 @@ ul,ol{margin:0;padding:0;list-style:none}
                 algo_std_desc: "Модель Itti–Koch плюс центральное смещение фиксаций (Tatler 2007). При просмотре изображения взгляд статистически тяготеет к центру — реалистично для фото и рекламы.",
                 algo_dyn_desc: "Чистая восходящая заметность без центрального смещения. Показывает настоящие источники контраста в постерах и асимметричных композициях.",
                 method_note: "Метод: модель Itti–Koch–Niebur (1998) — многомасштабные разности центр–окружение (яркость, цветовая оппонентность, ориентация), прокси лиц и центральное смещение. Фиксации выбираются winner-take-all с торможением возврата.",
+                gd_cat_free: "Freeform",
+                grad_mesh: "Freeform",
+                gd_lib: "Библиотека",
+                gd_lib_title: "Библиотека градиентов",
+                gd_lib_search: "Поиск по названию (напр. Gold)...",
+                gd_lib_added: "добавлен в строку и закреплён",
+                gd_cat_metal: "Металл",
+                gd_cat_sunset: "Закат",
+                gd_cat_ocean: "Океан",
+                gd_cat_nature: "Природа",
+                gd_cat_neon: "Неон",
+                gd_cat_pastel: "Пастель",
+                gd_cat_dark: "Тёмные",
+                gd_cat_mono: "Моно",
+                gd_svg: "Скачать SVG (Illustrator)",
+                gd_svg_done: "SVG-файл скачан",
+                gd_copied: "CSS скопирован",
+                gd_rotate: "Повернуть угол",
+                gd_reroll: "Обновить колонку",
+                gd_copy_css: "Копировать CSS",
+                gd_stops_short: "цвета",
+                gd_cols: "колонок",
+                gd_next: "Следующие градиенты (Space)",
+                grad_radial: "Радиальный",
+                grad_linear: "Линейный",
+                grad_title: "Палитра градиентов",
                 change_image: "Другое изображение",
                 hero_side: "и многое другое в браузере",
                 saved_full: "Можно хранить до {n} цветов — удалите один.",
@@ -4596,7 +4952,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 
                 brand_cta: "Чтобы подготовить разделы цвета и логотипа:",
                 brand_cta_btn: "Аудит логотипа →",
-                tool7_desc: "Базовый, стандартный и полный брендбук — что входит в каждый уровень.",
+                tool7_desc: "Исследуйте готовые градиенты — Space обновляет, CSS в один клик.",
                 theme_dark: "Тёмная тема",
                 theme_light: "Светлая тема",
                 scale_temp: "Температура",
@@ -4838,7 +5194,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 
         // --- QLOBAL DƏYİŞƏNLƏR ---
         let currentLang = 'en';   // standart dil
-        var themeChoice = 'light';   // istifadəçinin mövzu seçimi (rəng səhifəsindən asılı deyil)
+        var themeChoice = 'dark';   // standart mövzu tünddür; istifadəçi seçimi üstələyir
         let selectedAlgo = 'itti';
         let centerBiasOn = true;
         let globalStats = null;
@@ -4911,6 +5267,8 @@ ul,ol{margin:0;padding:0;list-style:none}
                 });
 
                 updateStaticTexts();
+                setupHeroTyping(false);
+                if (typeof gdPaintTabs === 'function') { gdPaintTabs(); gdRender(); }
                 requestAnimationFrame(fitHeroTitle);
                 renderPresets();
                 renderProfile();
@@ -4927,6 +5285,25 @@ ul,ol{margin:0;padding:0;list-style:none}
         });
 
         // --- SƏHİFƏ KEÇİDLƏRİ VƏ BİLDİRİŞLƏR ---
+        // Səhifə açılanda animasiyanı yenidən işə salır.
+        // Bitəndən sonra sinif silinir — «transform» qalıcı olarsa
+        // daxildəki fixed/absolute elementlərin bazası dəyişər.
+        function playViewIn(el) {
+            if (!el) return;
+            let reduce = false;
+            try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+            if (reduce) return;
+            el.classList.remove('view-in');
+            void el.offsetWidth;              // animasiyanı sıfırla
+            el.classList.add('view-in');
+            const done = () => {
+                el.classList.remove('view-in');
+                el.removeEventListener('animationend', done);
+            };
+            el.addEventListener('animationend', done);
+            setTimeout(done, 900);            // ehtiyat
+        }
+
         window.switchView = function(viewId, mode) {
             // bütün səhifələr gizlədilir — yeni səhifə əlavə edəndə siyahı yenilənməsinə ehtiyac yoxdur
             document.querySelectorAll('[id$="-view"]').forEach(v => v.classList.add('hidden'));
@@ -4934,9 +5311,14 @@ ul,ol{margin:0;padding:0;list-style:none}
             if (viewId === 'brand') renderBrand();
             if (viewId === 'print') renderPrint();
 
-            document.getElementById(viewId + '-view').classList.remove('hidden');
+            const target = document.getElementById(viewId + '-view');
+            target.classList.remove('hidden');
+            playViewIn(target);
             // mövzunu yenidən tətbiq et — rəng səhifəsi tünd rejimdən kənarda qalır
             if (typeof applyTheme === 'function') applyTheme(themeChoice);
+            if (viewId === 'gradient') {
+                if (typeof gdInit === 'function') setTimeout(gdInit, 0);
+            }
             if (viewId === 'color-hierarchy' && pendingSharedPalette) {
                 pendingSharedPalette = false;
                 setTimeout(() => { try { paletteFromHash(); } catch (e) {} }, 60);
@@ -7996,7 +8378,7 @@ ul,ol{margin:0;padding:0;list-style:none}
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
                         body: JSON.stringify({
-                            _subject: 'RDM — yeni ideya',
+                            _subject: 'Seenly.design — new idea',
                             _template: 'table',
                             ad: name || '—',
                             epoct: mail || '—',
@@ -8013,7 +8395,7 @@ ul,ol{margin:0;padding:0;list-style:none}
                 } catch (e) {
                     // xidmət cavab vermirsə — poçt proqramı ilə göndərmə
                     err.innerHTML = t.idea_e_send +
-                        ` <a href="mailto:${IDEA_MAILTO}?subject=${encodeURIComponent('RDM — ideya')}&body=${encodeURIComponent(body)}" class="idea-alt">${t.idea_mailto}</a>`;
+                        ` <a href="mailto:${IDEA_MAILTO}?subject=${encodeURIComponent('Seenly.design — idea')}&body=${encodeURIComponent(body)}" class="idea-alt">${t.idea_mailto}</a>`;
                     err.style.display = 'block';
                 } finally {
                     btn.disabled = false; btn.textContent = t.idea_send;
@@ -8651,7 +9033,7 @@ ul,ol{margin:0;padding:0;list-style:none}
   <text x="12" y="26" font-family="${sans}" font-size="2.8" letter-spacing="0.5" fill="#94a3b8">${new Date().toISOString().slice(0, 10)} · ${logoReportData.length} ${esc(t.report_colors)}</text>
   <line x1="12" y1="32" x2="198" y2="32" stroke="#0f172a" stroke-width="0.4"/>
   ${rows}
-  <text x="12" y="${H - 10}" font-family="${sans}" font-size="2.4" fill="#cbd5e1">${esc(t.pantone_note)}: PANTONE / RAL · RASIONAL DIZAYN MƏRKƏZİ</text>
+  <text x="12" y="${H - 10}" font-family="${sans}" font-size="2.4" fill="#cbd5e1">${esc(t.pantone_note)}: PANTONE / RAL · SEENLY.DESIGN</text>
 </svg>`;
 
             saveFile(svg, 'image/svg+xml;charset=utf-8', 'brend-reng-pasportu.svg');
@@ -8849,6 +9231,7 @@ ul,ol{margin:0;padding:0;list-style:none}
                 ['focal-point', t.card_focal, false],
                 ['color-hierarchy', t.card_color, false],
                 ['type', t.type_title, false],
+                ['gradient', t.grad_title, false],
                 ['print', t.print_title, false],
                 ['logo', t.logo_title, false]
             ];
@@ -8910,15 +9293,776 @@ ul,ol{margin:0;padding:0;list-style:none}
                 entries.forEach((en) => {
                     if (!en.isIntersecting) return;
                     const i = rows.indexOf(en.target);
-                    setTimeout(() => en.target.classList.remove('is-out'), Math.max(0, i) * 95);
+                    setTimeout(() => en.target.classList.remove('is-out'), Math.max(0, i) * 130);
                     io.unobserve(en.target);
                 });
             }, { threshold: 0.08, rootMargin: '0px 0px -2% 0px' });
             rows.forEach(r => io.observe(r));
 
             // ehtiyat: nə olursa olsun 2 saniyədən sonra göstər
-            setTimeout(() => rows.forEach(r => r.classList.remove('is-out')), 2000);
+            setTimeout(() => rows.forEach(r => r.classList.remove('is-out')), 3000);
         })();
+
+        // ============================================================
+        //  BAŞLIQDA YAZMA EFFEKTİ — ikinci sətrin SON sözü
+        //  EN «seen first?» → «first?» yazılır; AZ/RU-da sətir tək sözdür.
+        // ============================================================
+        let heroTypeTimer = null;
+
+        function setupHeroTyping(animate) {
+            const el = document.querySelector('.sn-l2');
+            if (!el) return;
+            clearTimeout(heroTypeTimer);
+
+            const full = (translations[currentLang].hero_l2 || el.textContent || '').trim();
+            const i = full.lastIndexOf(' ');
+            const head = i > -1 ? full.slice(0, i + 1) : '';
+            const word = i > -1 ? full.slice(i + 1) : full;
+
+            el.innerHTML =
+                `${esc(head)}<span class="sn-type"><span class="sn-type-txt"></span><span class="sn-caret"></span></span>`;
+            const txt = el.querySelector('.sn-type-txt');
+            const caret = el.querySelector('.sn-caret');
+
+            let reduce = false;
+            try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+
+            if (!animate || reduce) {
+                txt.textContent = word;
+                if (caret) caret.remove();
+                return;
+            }
+
+            const chars = [...word];
+            let k = 0;
+            const step = () => {
+                txt.textContent = chars.slice(0, ++k).join('');
+                if (k < chars.length) {
+                    // hərflər arası müddət bir az dəyişir — canlı yazı hissi
+                    heroTypeTimer = setTimeout(step, 85 + Math.random() * 55);
+                } else {
+                    // yazıb bitirdikdən sonra kursor bir az yanıb sönür, sonra itir
+                    heroTypeTimer = setTimeout(() => { if (caret) caret.classList.add('is-out'); }, 1400);
+                }
+            };
+            heroTypeTimer = setTimeout(step, 520);   // səhifə keçidi bitsin
+        }
+
+        // ============================================================
+        //  QRADİENT ANALİZATORU — rəng fəzası riyaziyyatı
+        // ============================================================
+        const gS2L = v => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+        const gL2S = v => { v = v <= 0.0031308 ? v * 12.92 : 1.055 * Math.pow(Math.max(0, v), 1 / 2.4) - 0.055;
+                            return Math.round(Math.max(0, Math.min(1, v)) * 255); };
+
+        function gRgb2Oklab(r, g, b) {
+            const R = gS2L(r), G = gS2L(g), B = gS2L(b);
+            const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+            const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+            const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+            return [0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s,
+                    1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s,
+                    0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s];
+        }
+        function gOklab2Rgb(L, a, bb) {
+            const l_ = L + 0.3963377774 * a + 0.2158037573 * bb;
+            const m_ = L - 0.1055613458 * a - 0.0638541728 * bb;
+            const s_ = L - 0.0894841775 * a - 1.2914855480 * bb;
+            const l = l_ ** 3, m = m_ ** 3, s = s_ ** 3;
+            return [gL2S(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
+                    gL2S(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
+                    gL2S(-0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s)];
+        }
+        const gLch = ([L, a, b]) => [L, Math.hypot(a, b), (Math.atan2(b, a) * 180 / Math.PI + 360) % 360];
+        const gLab = ([L, C, h]) => [L, C * Math.cos(h * Math.PI / 180), C * Math.sin(h * Math.PI / 180)];
+        const gShortHue = (a, b) => { const d = ((b - a) % 360 + 540) % 360 - 180; return a + d; };
+
+        function gRgb2Hsl(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn, l = (mx + mn) / 2;
+            let h = 0, s = 0;
+            if (d) {
+                s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+                h = mx === r ? ((g - b) / d + (g < b ? 6 : 0)) : mx === g ? ((b - r) / d + 2) : ((r - g) / d + 4);
+                h *= 60;
+            }
+            return [h, s * 100, l * 100];
+        }
+        function gHsl2Rgb(h, s, l) {
+            s /= 100; l /= 100; h = ((h % 360) + 360) % 360;
+            const c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2;
+            let r = 0, g = 0, b = 0;
+            if (h < 60) { r = c; g = x; } else if (h < 120) { r = x; g = c; }
+            else if (h < 180) { g = c; b = x; } else if (h < 240) { g = x; b = c; }
+            else if (h < 300) { r = x; b = c; } else { r = c; b = x; }
+            return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+        }
+
+        // İki rəng arasında seçilmiş fəzada qarışdırma
+        function gMix(c1, c2, t, mode) {
+            if (mode === 'oklch') {
+                const A = gLch(gRgb2Oklab(...c1)), B = gLch(gRgb2Oklab(...c2));
+                const h = (A[1] < 0.002 || B[1] < 0.002) ? (A[1] < 0.002 ? B[2] : A[2]) : gShortHue(A[2], B[2]);
+                return gOklab2Rgb(...gLab([A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (h - A[2]) * t]));
+            }
+            if (mode === 'hsl') {
+                const A = gRgb2Hsl(...c1), B = gRgb2Hsl(...c2);
+                return gHsl2Rgb(A[0] + (gShortHue(A[0], B[0]) - A[0]) * t,
+                                A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t);
+            }
+            return [0, 1, 2].map(i => Math.round(c1[i] + (c2[i] - c1[i]) * t));
+        }
+
+        const gLum = ([r, g, b]) => 0.2126 * gS2L(r) + 0.7152 * gS2L(g) + 0.0722 * gS2L(b);
+        const gCR = (a, b) => { const x = gLum(a), y = gLum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+
+        // Qradient boyunca nümunə nöqtələri
+        function gSample(stops, mode, n) {
+            n = n || 64;
+            const st = stops.slice().sort((a, b) => a.p - b.p);
+            const out = [];
+            for (let i = 0; i < n; i++) {
+                const t = i / (n - 1);
+                let k = 0;
+                while (k < st.length - 2 && t > st[k + 1].p) k++;
+                const a = st[k], b = st[k + 1];
+                const lt = b.p === a.p ? 0 : (t - a.p) / (b.p - a.p);
+                out.push(gMix(a.c, b.c, Math.max(0, Math.min(1, lt)), mode));
+            }
+            return out;
+        }
+
+        // Deuteranopiya simulyasiyası (Viénot–Brettel–Mollon)
+
+        // ---- dörd yoxlama ----
+        function gcTextContrast(stops, mode) {
+            const s = gSample(stops, mode, 48);
+            let w = Infinity, k = Infinity;
+            s.forEach(c => { w = Math.min(w, gCR(c, [255, 255, 255])); k = Math.min(k, gCR(c, [0, 0, 0])); });
+            const best = Math.max(w, k);
+            return { white: w, black: k, best, ink: w >= k ? 'white' : 'black', ok: best >= 4.5 };
+        }
+
+        // ============================================================
+        //  QRADİENT ANALİZATORU — vəziyyət və render
+        // ============================================================
+        // Standart qradient qəsdən «mavi → sarı» seçilib: sRGB-də ortada
+        // boza çevrilir, OKLCH-də isə qalır — alətin dəyəri ilk baxışda görünür.
+
+        // Brauzer sRGB-də interpolyasiya edir; digər fəzalar üçün
+        // aralıq dayanacaqlar hesablayırıq ki, görüntü dəqiq olsun.
+        // ============================================================
+        //  QRADİENT PALİTRASI — Rəng İyerarxiyasının qradient qarşılığı
+        // ============================================================
+        // ============================================================
+        //  QRADİENT KİTABXANASI — kateqoriyalara bölünmüş hazır nümunələr
+        //  Metal qradientlərdə çoxsaylı nöqtə var: işıq zolağı metal
+        //  səthi hissini yaradır, iki rənglə bu alınmır.
+        // ============================================================
+        const GD_CATS = ['metal', 'sunset', 'ocean', 'nature', 'neon', 'pastel', 'dark', 'mono', 'free'];
+        const GD_LIB = [
+            // --- METAL ---
+            { cat: 'metal', n: 'Gold', a: 135, s: ['#7A5C10', '#D4A22A', '#FBEFA0', '#D4A22A', '#8A6712'] },
+            { cat: 'metal', n: 'Rich Gold', a: 120, s: ['#8A6008', '#E0B33C', '#FFF6C4', '#C9942A', '#7A5407'] },
+            { cat: 'metal', n: 'Silver', a: 135, s: ['#6E747C', '#C3CAD2', '#F6F8FA', '#AEB6BF', '#767C84'] },
+            { cat: 'metal', n: 'Platinum', a: 120, s: ['#8A9199', '#D5DBE1', '#FFFFFF', '#BCC3CA', '#909699'] },
+            { cat: 'metal', n: 'Copper', a: 135, s: ['#6E3416', '#B4643A', '#EBA97C', '#A45A33', '#6B3315'] },
+            { cat: 'metal', n: 'Bronze', a: 120, s: ['#5A3A18', '#9A6A31', '#D2A265', '#8B5F2C', '#553716'] },
+            { cat: 'metal', n: 'Rose Gold', a: 135, s: ['#8C4A46', '#D08C82', '#F7D2C8', '#C5817A', '#8A4843'] },
+            { cat: 'metal', n: 'Steel', a: 160, s: ['#39414B', '#6B7683', '#A7B2BE', '#5E6874', '#363E47'] },
+            { cat: 'metal', n: 'Titanium', a: 145, s: ['#4A4E55', '#8B9099', '#C8CDD4', '#7B8089', '#474B52'] },
+
+            // --- GÜN BATIMI ---
+            { cat: 'sunset', n: 'Sunset', a: 160, s: ['#FF5E3A', '#FF9966', '#FFD194'] },
+            { cat: 'sunset', n: 'Dusk', a: 180, s: ['#2B1B4B', '#7B3F6B', '#E0785B', '#FFC178'] },
+            { cat: 'sunset', n: 'Ember', a: 135, s: ['#5B1A1A', '#C43C21', '#F98A3D'] },
+            { cat: 'sunset', n: 'Peach', a: 120, s: ['#FF8177', '#FFA87A', '#FFD3A5'] },
+            { cat: 'sunset', n: 'Sunrise', a: 0, s: ['#FF6B6B', '#FFB35C', '#FFE79A'] },
+            { cat: 'sunset', n: 'Mars', a: 145, s: ['#3E1212', '#8C2F1E', '#D96832'] },
+
+            // --- OKEAN ---
+            { cat: 'ocean', n: 'Deep Ocean', a: 180, s: ['#0A2342', '#12608A', '#2FA8C4'] },
+            { cat: 'ocean', n: 'Lagoon', a: 135, s: ['#0F766E', '#14B8A6', '#7DE8DC'] },
+            { cat: 'ocean', n: 'Arctic', a: 160, s: ['#123A5A', '#3E8FB0', '#BEE3F0'] },
+            { cat: 'ocean', n: 'Tide', a: 90, s: ['#00C5DB', '#1E7BE6'] },
+            { cat: 'ocean', n: 'Abyss', a: 180, s: ['#050B1A', '#0C2E52', '#12608A'] },
+            { cat: 'ocean', n: 'Seafoam', a: 120, s: ['#4FD1B5', '#A7E8D2', '#E6F7F1'] },
+
+            // --- TƏBİƏT ---
+            { cat: 'nature', n: 'Forest', a: 160, s: ['#12331C', '#2E6B39', '#7BB661'] },
+            { cat: 'nature', n: 'Moss', a: 135, s: ['#33421C', '#6B8A3A', '#B7CE72'] },
+            { cat: 'nature', n: 'Desert', a: 120, s: ['#8A6A3A', '#C9A66B', '#EFDDBA'] },
+            { cat: 'nature', n: 'Clay', a: 145, s: ['#6B3B2A', '#A9674C', '#D9A184'] },
+            { cat: 'nature', n: 'Aurora', a: 135, s: ['#0B3A4A', '#1E9E7A', '#8CE8A8', '#B5A7E8'] },
+            { cat: 'nature', n: 'Lavender Field', a: 150, s: ['#4A3B6B', '#8E7AB5', '#D8CBE8'] },
+
+            // --- NEON ---
+            { cat: 'neon', n: 'Cyberpunk', a: 135, s: ['#7A00CC', '#E6007A', '#FF6A00'] },
+            { cat: 'neon', n: 'Vaporwave', a: 120, s: ['#5B2A86', '#C33C8E', '#FF8CC8'] },
+            { cat: 'neon', n: 'Laser', a: 90, s: ['#00F0FF', '#8A2BE2', '#FF007A'] },
+            { cat: 'neon', n: 'Toxic', a: 135, s: ['#0B3D0B', '#39FF14', '#B6FF7A'] },
+            { cat: 'neon', n: 'Synth', a: 180, s: ['#160B33', '#6B1FA8', '#FF2E88'] },
+            { cat: 'neon', n: 'Plasma', a: 45, s: ['#1B0A3D', '#4D2BD6', '#00E0FF'] },
+
+            // --- PASTEL ---
+            { cat: 'pastel', n: 'Cotton', a: 120, s: ['#FFD3E0', '#D7E3FC', '#CFF4E4'] },
+            { cat: 'pastel', n: 'Sorbet', a: 135, s: ['#FFE0B5', '#FFC2C7', '#E2C2FF'] },
+            { cat: 'pastel', n: 'Mint Cream', a: 160, s: ['#D6F5E3', '#EAF7F0', '#FDFDF7'] },
+            { cat: 'pastel', n: 'Powder', a: 90, s: ['#DCE7F7', '#F2E7F7', '#FBEFE4'] },
+            { cat: 'pastel', n: 'Blossom', a: 145, s: ['#FBD7E4', '#F2C6E0', '#D9C2EC'] },
+
+            // --- TÜND ---
+            { cat: 'dark', n: 'Midnight', a: 180, s: ['#05060A', '#141A2B', '#27324D'] },
+            { cat: 'dark', n: 'Obsidian', a: 135, s: ['#0B0B0D', '#1C1C22', '#33333D'] },
+            { cat: 'dark', n: 'Ink', a: 160, s: ['#070D1A', '#102A4A', '#1B4570'] },
+            { cat: 'dark', n: 'Charcoal', a: 120, s: ['#141414', '#2C2C2C', '#474747'] },
+            { cat: 'dark', n: 'Deep Space', a: 200, s: ['#02030A', '#0E1236', '#2A1B5E'] },
+
+            // --- MONOXROM ---
+            { cat: 'mono', n: 'Paper', a: 160, s: ['#FFFFFF', '#F1F2F4', '#DFE2E6'] },
+            { cat: 'mono', n: 'Graphite', a: 135, s: ['#2B2E33', '#5A5F66', '#9AA1A9'] },
+            { cat: 'mono', n: 'Fog', a: 180, s: ['#E8EBEE', '#C4CAD1', '#9BA3AC'] },
+            { cat: 'mono', n: 'Slate', a: 145, s: ['#0F172A', '#334155', '#64748B'] },
+
+            // ===== ƏLAVƏ NÜMUNƏLƏR =====
+            // --- METAL ---
+            { cat: 'metal', n: 'Brass', a: 130, s: ['#6B5416', '#B9973C', '#EEDA92', '#A98A31', '#655013'] },
+            { cat: 'metal', n: 'Gunmetal', a: 150, s: ['#22262B', '#484F58', '#7C858F', '#3E454D', '#202429'] },
+            { cat: 'metal', n: 'Chrome', a: 120, s: ['#5C6672', '#AFBAC6', '#FFFFFF', '#8E99A6', '#59626E'] },
+            { cat: 'metal', n: 'Pewter', a: 145, s: ['#5A5F63', '#949A9F', '#C6CCD1', '#7E848A', '#565B5F'] },
+            { cat: 'metal', n: 'Antique Gold', a: 135, s: ['#4F3A0C', '#9C7A1F', '#D6BC6A', '#8C6C1A', '#4A360B'] },
+
+            // --- GÜN BATIMI ---
+            { cat: 'sunset', n: 'Tangerine', a: 135, s: ['#D93A00', '#FF7A18', '#FFC46B'] },
+            { cat: 'sunset', n: 'Flamingo', a: 120, s: ['#E0457B', '#F97F8E', '#FFC4A3'] },
+            { cat: 'sunset', n: 'Wine Dusk', a: 170, s: ['#3A0F26', '#7C2247', '#C4507A'] },
+            { cat: 'sunset', n: 'Saffron', a: 90, s: ['#B54A00', '#E8901A', '#FFD98A'] },
+            { cat: 'sunset', n: 'Blush Sky', a: 0, s: ['#8E4B70', '#D98AA0', '#FBD5C3'] },
+            { cat: 'sunset', n: 'Molten', a: 150, s: ['#2B0A05', '#8E1F0B', '#E2571C', '#FFA13D'] },
+
+            // --- OKEAN ---
+            { cat: 'ocean', n: 'Glacier', a: 145, s: ['#1B4B6B', '#5FA3C4', '#CDE9F2'] },
+            { cat: 'ocean', n: 'Reef', a: 120, s: ['#06403E', '#12897C', '#5FD9B4', '#C4F2DD'] },
+            { cat: 'ocean', n: 'Storm Sea', a: 180, s: ['#111C2B', '#2A4A63', '#557C93'] },
+            { cat: 'ocean', n: 'Shallow', a: 90, s: ['#0E6D92', '#37B6C9', '#9FE4E8'] },
+            { cat: 'ocean', n: 'Indigo Tide', a: 160, s: ['#0B1F45', '#1D4E9B', '#4B9AD9'] },
+            { cat: 'ocean', n: 'Kelp', a: 135, s: ['#0A2E2B', '#1C6355', '#4FA07A'] },
+
+            // --- TƏBİƏT ---
+            { cat: 'nature', n: 'Pine', a: 170, s: ['#0B2418', '#1E4F35', '#3F8055'] },
+            { cat: 'nature', n: 'Wheat', a: 120, s: ['#9C7A2E', '#D9B95E', '#F4E5AE'] },
+            { cat: 'nature', n: 'Terracotta', a: 140, s: ['#7A3B22', '#B2603C', '#E0A282'] },
+            { cat: 'nature', n: 'Fern', a: 110, s: ['#1E3D1C', '#49773A', '#93BE6A'] },
+            { cat: 'nature', n: 'Canyon', a: 155, s: ['#5E2A1E', '#A8523A', '#E09A6B', '#F3D6AE'] },
+            { cat: 'nature', n: 'Sage', a: 130, s: ['#3F5244', '#7C9679', '#C3D4BD'] },
+            { cat: 'nature', n: 'Bloom', a: 125, s: ['#6B2450', '#B4538B', '#F0A9C8'] },
+
+            // --- NEON ---
+            { cat: 'neon', n: 'Electric', a: 110, s: ['#0A1A4D', '#2E5BFF', '#5FF0FF'] },
+            { cat: 'neon', n: 'Acid', a: 140, s: ['#1A3D00', '#79E000', '#DCFF66'] },
+            { cat: 'neon', n: 'Hot Wire', a: 90, s: ['#2B0033', '#C400A8', '#FF5C7A'] },
+            { cat: 'neon', n: 'Ultraviolet', a: 160, s: ['#0E0430', '#4A1EBF', '#9B6BFF'] },
+            { cat: 'neon', n: 'Miami', a: 120, s: ['#00D2FF', '#7B5BFF', '#FF4FB8'] },
+            { cat: 'neon', n: 'Signal', a: 45, s: ['#001F3F', '#00C2A8', '#B4FF3C'] },
+
+            // --- PASTEL ---
+            { cat: 'pastel', n: 'Meringue', a: 130, s: ['#FDF3E3', '#F7E1E8', '#E7E3F7'] },
+            { cat: 'pastel', n: 'Sea Glass', a: 150, s: ['#DFF3EF', '#CFE6EA', '#D9DCF0'] },
+            { cat: 'pastel', n: 'Peony', a: 110, s: ['#FCE1EC', '#F6CFE0', '#E8C8E4'] },
+            { cat: 'pastel', n: 'Butter', a: 95, s: ['#FFF6D8', '#FFE9BC', '#FBD9B3'] },
+            { cat: 'pastel', n: 'Periwinkle', a: 140, s: ['#E3E7FA', '#CDD5F5', '#BFC9EE'] },
+            { cat: 'pastel', n: 'Almond', a: 120, s: ['#F6EDE3', '#EBD9C8', '#DCC5B0'] },
+
+            // --- TÜND ---
+            { cat: 'dark', n: 'Noir', a: 150, s: ['#000000', '#101014', '#25252C'] },
+            { cat: 'dark', n: 'Deep Teal', a: 170, s: ['#03161A', '#0A3A42', '#14606B'] },
+            { cat: 'dark', n: 'Plum Night', a: 135, s: ['#120A1E', '#2E1A47', '#4B2D6B'] },
+            { cat: 'dark', n: 'Ember Dark', a: 160, s: ['#12080A', '#3A1418', '#6B2229'] },
+            { cat: 'dark', n: 'Forest Night', a: 180, s: ['#060F0B', '#12281C', '#22412D'] },
+
+            // --- MONOXROM ---
+            { cat: 'mono', n: 'Linen', a: 140, s: ['#FBFAF7', '#EFEDE7', '#DCD9D1'] },
+            { cat: 'mono', n: 'Concrete', a: 120, s: ['#B8BBBE', '#93979B', '#6E7276'] },
+            { cat: 'mono', n: 'Onyx', a: 155, s: ['#1A1A1D', '#303036', '#4C4C55'] },
+            { cat: 'mono', n: 'Ash', a: 100, s: ['#D6D8DA', '#AEB2B6', '#868B90'] },
+
+            // --- FREEFORM ---
+            { cat: 'free', n: 'Aurora Flow', base: '#16123A', b: [
+                { x: 18, y: 26, r: 62, a: .9, c: '#2EE6C8' }, { x: 78, y: 20, r: 58, a: .88, c: '#7A5BFF' },
+                { x: 70, y: 78, r: 60, a: .85, c: '#FF5FA2' }, { x: 26, y: 74, r: 55, a: .85, c: '#3AA0FF' }] },
+            { cat: 'free', n: 'Peach Cloud', base: '#4A2340', b: [
+                { x: 24, y: 24, r: 64, a: .9, c: '#FF9A76' }, { x: 76, y: 28, r: 58, a: .88, c: '#FFD0A1' },
+                { x: 66, y: 76, r: 58, a: .85, c: '#E86A9A' }] },
+            { cat: 'free', n: 'Deep Sea', base: '#04121F', b: [
+                { x: 22, y: 30, r: 60, a: .9, c: '#00A0B4' }, { x: 74, y: 22, r: 56, a: .86, c: '#2E5FCC' },
+                { x: 62, y: 80, r: 58, a: .82, c: '#0E7A6B' }, { x: 30, y: 72, r: 50, a: .8, c: '#63D9C6' }] },
+            { cat: 'free', n: 'Citrus Haze', base: '#3A2A08', b: [
+                { x: 20, y: 22, r: 62, a: .92, c: '#FFD447' }, { x: 78, y: 32, r: 58, a: .88, c: '#FF8A3D' },
+                { x: 52, y: 80, r: 56, a: .84, c: '#B7E04A' }] },
+            { cat: 'free', n: 'Violet Mist', base: '#241040', b: [
+                { x: 26, y: 26, r: 60, a: .9, c: '#A96BFF' }, { x: 74, y: 24, r: 56, a: .86, c: '#FF7ED4' },
+                { x: 70, y: 76, r: 58, a: .84, c: '#5B8CFF' }, { x: 28, y: 76, r: 52, a: .8, c: '#C9A7FF' }] },
+            { cat: 'free', n: 'Moss Light', base: '#12210F', b: [
+                { x: 24, y: 28, r: 62, a: .9, c: '#7FD44A' }, { x: 76, y: 24, r: 56, a: .86, c: '#D4E07A' },
+                { x: 64, y: 78, r: 56, a: .82, c: '#3E9E68' }] },
+            { cat: 'free', n: 'Rose Quartz', base: '#3A1428', b: [
+                { x: 22, y: 26, r: 62, a: .9, c: '#FF9EC4' }, { x: 78, y: 30, r: 56, a: .86, c: '#F7D6E0' },
+                { x: 58, y: 78, r: 58, a: .82, c: '#C66B9E' }] },
+            { cat: 'free', n: 'Cyber Bloom', base: '#0B0620', b: [
+                { x: 20, y: 24, r: 58, a: .92, c: '#00E5FF' }, { x: 78, y: 22, r: 56, a: .9, c: '#FF2E97' },
+                { x: 72, y: 76, r: 58, a: .86, c: '#7A2EFF' }, { x: 26, y: 74, r: 52, a: .84, c: '#00FFA3' }] },
+            { cat: 'free', n: 'Amber Dusk', base: '#2A1206', b: [
+                { x: 24, y: 24, r: 64, a: .9, c: '#FFB347' }, { x: 76, y: 30, r: 58, a: .86, c: '#E0562C' },
+                { x: 54, y: 80, r: 56, a: .82, c: '#8E2F4F' }] },
+            { cat: 'free', n: 'Arctic Light', base: '#0E2233', b: [
+                { x: 22, y: 26, r: 62, a: .88, c: '#9ADBF0' }, { x: 76, y: 24, r: 56, a: .84, c: '#D8ECF7' },
+                { x: 66, y: 78, r: 58, a: .8, c: '#4A8FC4' }] },
+            { cat: 'free', n: 'Jade Smoke', base: '#0A1C18', b: [
+                { x: 26, y: 28, r: 60, a: .9, c: '#2ED4A8' }, { x: 74, y: 26, r: 56, a: .85, c: '#8EE8C4' },
+                { x: 60, y: 78, r: 56, a: .8, c: '#1A6E7A' }] },
+            { cat: 'free', n: 'Sunfire', base: '#33060C', b: [
+                { x: 20, y: 26, r: 62, a: .92, c: '#FF4D3D' }, { x: 76, y: 22, r: 58, a: .88, c: '#FFB03A' },
+                { x: 68, y: 78, r: 56, a: .84, c: '#C4185C' }, { x: 28, y: 76, r: 50, a: .8, c: '#FF7A5C' }] }
+        ];
+        const gdRgb = hx => [1, 3, 5].map(k => parseInt(hx.substr(k, 2), 16));
+        const gdLibStops = p => (p.s || []).map((hx, i) => ({
+            p: p.s.length === 1 ? 0 : i / (p.s.length - 1),
+            c: gdRgb(hx)
+        }));
+
+        // Kitabxana yazısından tam sütun obyekti qurur (xətti və ya freeform)
+        function gdLibCol(p, type) {
+            if (p.b) {
+                const blobs = p.b.map(b => ({ x: b.x, y: b.y, r: b.r, a: b.a, c: gdRgb(b.c) }));
+                const base = gdRgb(p.base);
+                return { type: 'mesh', base, blobs, stops: gdMeshStops(base, blobs), angle: 0, locked: false };
+            }
+            return { stops: gdLibStops(p), angle: p.a, type: type || 'linear', locked: false };
+        }
+
+        const GD_COUNT = [3, 4, 5];
+
+        let gdCols = [];          // {stops, angle, type, locked}
+        let gdSpace = 'oklch';
+        let gdType = 'linear';
+        let gdN = 3;
+        let gdReady = false;
+
+        const gdHex = c => '#' + c.map(v => Math.round(v).toString(16).padStart(2, '0')).join('').toUpperCase();
+
+        // ---- qradient yaratma ----
+        // Dizayn baxımından işlək cütlüklər: analoq, qonşu-tamamlayıcı və
+        // ton-üzrə keçidlər. Hər biri OKLCH-də qurulduğu üçün ortası boz olmur.
+        function gdMake() {
+            const h = Math.random() * 360;
+            const kinds = ['analog', 'split', 'tonal', 'triad'];
+            const kind = kinds[Math.floor(Math.random() * kinds.length)];
+            let h2, sat1, sat2, l1, l2;
+
+            if (kind === 'analog') { h2 = h + (25 + Math.random() * 40) * (Math.random() < .5 ? -1 : 1); }
+            else if (kind === 'split') { h2 = h + (140 + Math.random() * 60) * (Math.random() < .5 ? -1 : 1); }
+            else if (kind === 'triad') { h2 = h + 120 * (Math.random() < .5 ? -1 : 1); }
+            else { h2 = h + (Math.random() * 14 - 7); }
+
+            if (kind === 'tonal') {
+                sat1 = 45 + Math.random() * 35; sat2 = sat1 - (5 + Math.random() * 20);
+                l1 = 22 + Math.random() * 14;   l2 = 68 + Math.random() * 16;
+            } else {
+                sat1 = 55 + Math.random() * 35; sat2 = 55 + Math.random() * 35;
+                l1 = 40 + Math.random() * 22;   l2 = 46 + Math.random() * 24;
+            }
+
+            const c1 = gHsl2Rgb(h, sat1, l1);
+            const c2 = gHsl2Rgb(h2, sat2, l2);
+            const stops = [{ p: 0, c: c1 }, { p: 1, c: c2 }];
+
+            // bəzən üçüncü nöqtə — keçidi zənginləşdirir
+            if (Math.random() < .35) {
+                const hm = h + (h2 - h) * (0.45 + Math.random() * 0.1);
+                stops.splice(1, 0, { p: 0.45 + Math.random() * 0.12,
+                                     c: gHsl2Rgb(hm, (sat1 + sat2) / 2 + 8, (l1 + l2) / 2) });
+            }
+            return {
+                stops,
+                angle: [0, 45, 90, 135, 180, 225, 270, 315][Math.floor(Math.random() * 8)],
+                type: gdType,
+                locked: false
+            };
+        }
+
+        function gdCss(col, mode, n) {
+            if (col.type === 'mesh') return gdMeshCss(col);
+            const m = mode || gdSpace;
+            const st = col.stops.slice().sort((a, b) => a.p - b.p);
+            let stops;
+            if (m === 'srgb') {
+                stops = st.map(s => `${gdHex(s.c)} ${(s.p * 100).toFixed(1)}%`).join(', ');
+            } else {
+                const k = n || 24;
+                stops = gSample(col.stops, m, k)
+                    .map((c, i) => `${gdHex(c)} ${(i / (k - 1) * 100).toFixed(1)}%`).join(', ');
+            }
+            return (col.type === 'radial')
+                ? `radial-gradient(circle at 50% 45%, ${stops})`
+                : `linear-gradient(${col.angle}deg, ${stops})`;
+        }
+
+        // ---- FREEFORM (mesh) qradient ----
+        // Illustrator-un Freeform rejimi rəng ləkələrinin qarışmasıdır.
+        // Brauzerdə bunu şəffaflığa keçən dairəvi qradientləri üst-üstə
+        // yığmaqla alırıq — əlavə kitabxana lazım deyil.
+        // Mavi səs-küy paylanması (Mitchell «best candidate»).
+        // Təmiz təsadüfi nöqtələr bir yerə yığılır; bu üsulda hər yeni nöqtə
+        // bir neçə namizəddən seçilir — mövcud nöqtələrdən ən uzağı qalib gəlir.
+        function gdBlueNoise(n, margin) {
+            const pts = [];
+            const rnd = () => [margin + Math.random() * (100 - 2 * margin),
+                               margin + Math.random() * (100 - 2 * margin)];
+            for (let i = 0; i < n; i++) {
+                if (!pts.length) { pts.push(rnd()); continue; }
+                let best = null, bestD = -1;
+                for (let k = 0; k < 14; k++) {
+                    const c = rnd();
+                    let d = Infinity;
+                    for (const p of pts) d = Math.min(d, Math.hypot(c[0] - p[0], c[1] - p[1]));
+                    if (d > bestD) { bestD = d; best = c; }
+                }
+                pts.push(best);
+            }
+            return pts;
+        }
+
+        function gdMakeMesh() {
+            const h = Math.random() * 360;
+            const n = 3 + Math.floor(Math.random() * 4);          // 3–6 ləkə
+            const pts = gdBlueNoise(n, 12 + Math.random() * 8);
+
+            // çalarlar dairə boyunca paylanır, hər dəfə fərqli sıçrayışla
+            const step = (140 + Math.random() * 180) / n;
+            const dir = Math.random() < .5 ? 1 : -1;
+
+            // az ləkə → iri, çox ləkə → kiçik; ekran hər halda dolsun
+            const baseR = 74 - n * 5;
+            const blobs = pts.map((pt, i) => ({
+                x: Math.round(pt[0]),
+                y: Math.round(pt[1]),
+                r: Math.round(baseR + Math.random() * 22 - 8),
+                a: +(0.78 + Math.random() * 0.2).toFixed(2),
+                c: gHsl2Rgb(h + dir * step * i * (0.8 + Math.random() * 0.5),
+                            58 + Math.random() * 32, 48 + Math.random() * 24)
+            }));
+
+            const base = gHsl2Rgb(h + 180 + (Math.random() * 60 - 30),
+                                  38 + Math.random() * 24, 18 + Math.random() * 18);
+            return { type: 'mesh', base, blobs, locked: false, stops: gdMeshStops(base, blobs), angle: 0 };
+        }
+        // siyahı və adlandırma üçün ləkə rənglərini nöqtə kimi təqdim edirik
+        function gdMeshStops(base, blobs) {
+            const cs = blobs.slice(0, 4).map(b => b.c);
+            return cs.map((c, i) => ({ p: cs.length === 1 ? 0 : i / (cs.length - 1), c }));
+        }
+
+        function gdMeshCss(col) {
+            const layers = col.blobs.map(b =>
+                `radial-gradient(circle at ${b.x}% ${b.y}%, rgba(${b.c.join(',')},${b.a}) 0%, rgba(${b.c.join(',')},0) ${b.r}%)`);
+            const bg = gdHex(col.base);
+            return layers.join(', ') + `, linear-gradient(${bg}, ${bg})`;
+        }
+
+        function gdMeshSvg(col, W, H) {
+            const defs = col.blobs.map((b, i) => `
+    <radialGradient id="mesh${i}" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="rgb(${b.c.join(',')})" stop-opacity="${b.a}"/>
+        <stop offset="65%" stop-color="rgb(${b.c.join(',')})" stop-opacity="${(b.a * 0.35).toFixed(2)}"/>
+        <stop offset="100%" stop-color="rgb(${b.c.join(',')})" stop-opacity="0"/>
+    </radialGradient>`).join('');
+            const shapes = col.blobs.map((b, i) =>
+                `    <ellipse cx="${(W * b.x / 100).toFixed(1)}" cy="${(H * b.y / 100).toFixed(1)}" rx="${(W * b.r / 100).toFixed(1)}" ry="${(H * b.r / 100 * 1.15).toFixed(1)}" fill="url(#mesh${i})"/>`).join('\n');
+            return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+    <title>${esc(gdName(col))}</title>
+    <defs>${defs}
+    </defs>
+    <rect width="${W}" height="${H}" fill="${gdHex(col.base)}"/>
+${shapes}
+</svg>`;
+        }
+
+        // ---- Illustrator üçün SVG ixracı ----
+        // OKLCH/HSL rejimlərində aralıq nöqtələr «bişirilir», çünki
+        // Illustrator qradienti yalnız sRGB-də interpolyasiya edir.
+        // Liquify SVG-yə də yazılır — Illustrator filtri effekt kimi tanıyır.
+        function gdSvg(col, W, H) {
+            W = W || 1600; H = H || 1000;
+            if (col.type === 'mesh') return gdMeshSvg(col, W, H);
+            const m = gdSpace;
+            const st = col.stops.slice().sort((a, b) => a.p - b.p);
+            let pts;
+            if (m === 'srgb') {
+                pts = st.map(s => ({ o: s.p, c: gdHex(s.c) }));
+            } else {
+                const k = 16;
+                pts = gSample(col.stops, m, k).map((c, i) => ({ o: i / (k - 1), c: gdHex(c) }));
+            }
+            const stopTags = pts.map(p =>
+                `        <stop offset="${(p.o * 100).toFixed(2)}%" stop-color="${p.c}"/>`).join('\n');
+
+            let def;
+            if (col.type === 'radial') {
+                def = `    <radialGradient id="seenlyGrad" cx="50%" cy="45%" r="75%">
+${stopTags}
+    </radialGradient>`;
+            } else {
+                const a = col.angle * Math.PI / 180;
+                const dx = Math.sin(a), dy = -Math.cos(a);
+                const L = Math.abs(dx) + Math.abs(dy);
+                const x1 = (0.5 - dx * L / 2), y1 = (0.5 - dy * L / 2);
+                const x2 = (0.5 + dx * L / 2), y2 = (0.5 + dy * L / 2);
+                def = `    <linearGradient id="seenlyGrad" x1="${(x1 * 100).toFixed(2)}%" y1="${(y1 * 100).toFixed(2)}%" x2="${(x2 * 100).toFixed(2)}%" y2="${(y2 * 100).toFixed(2)}%">
+${stopTags}
+    </linearGradient>`;
+            }
+
+            return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+    <title>${esc(gdName(col))}</title>
+    <defs>
+${def}
+    </defs>
+    <rect width="${W}" height="${H}" fill="url(#seenlyGrad)"/>
+</svg>`;
+        }
+
+        function gdDownload(i) {
+            const col = gdCols[i];
+            if (!col) return;
+            const name = gdName(col).replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '').toLowerCase() || 'gradient';
+            saveFile(gdSvg(col), 'image/svg+xml;charset=utf-8', name + '.svg');
+        }
+
+        function gdName(col) {
+            const st = col.stops.slice().sort((a, b) => a.p - b.p);
+            const a = colorName(gdHex(st[0].c), currentLang);
+            const b = colorName(gdHex(st[st.length - 1].c), currentLang);
+            return a === b ? a : a + ' → ' + b;
+        }
+
+        function gdRegenerate(force) {
+            while (gdCols.length < gdN) gdCols.push(gdMake());
+            gdCols.length = gdN;
+            const mk = () => gdType === 'mesh' ? gdMakeMesh() : gdMake();
+            gdCols = gdCols.map(c => (c.locked && !force) ? c : Object.assign(mk(), { locked: false }));
+            gdCols.forEach(c => { if (!c.locked || c.type !== 'mesh') c.type = gdType; });
+            gdRender();
+        }
+
+        function gdRender() {
+            const box = document.getElementById('gradContainer');
+            if (!box) return;
+            const t = translations[currentLang];
+
+            box.innerHTML = gdCols.map((col, i) => {
+                const st = col.stops.slice().sort((a, b) => a.p - b.p);
+                const tc = gcTextContrast(col.stops, gdSpace);
+                const ink = tc.ink === 'white' ? 'gd-on-dark' : 'gd-on-light';
+                const chips = st.map(s =>
+                    `<button class="gd-chip" data-act="hex" data-hex="${gdHex(s.c)}" title="${t.copy_btn}">${gdHex(s.c)}</button>`).join('');
+                return `
+                <div class="gd-col ${ink}" data-i="${i}">
+                    <div class="gd-fill" style="background-image:${gdCss(col)}"></div>
+                    <div class="gd-head">
+                        <h2 class="gd-name">${esc(gdName(col))}</h2>
+                        <p class="gd-meta">${col.type === 'mesh' ? t.grad_mesh : col.type === 'radial' ? t.grad_radial : col.angle + '°'} · ${st.length} ${t.gd_stops_short}</p>
+                    </div>
+                    <div class="gd-right">
+                        <div class="gd-chips">${chips}</div>
+                        <div class="gd-acts">
+                            <button class="gd-btn" data-act="copy" data-i="${i}" title="${t.gd_copy_css}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>
+                            </button>
+                            <button class="gd-btn" data-act="shuffle" data-i="${i}" title="${t.gd_reroll}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0113.7-5.7M20 12a8 8 0 01-13.7 5.7M17 3v4h-4M7 21v-4h4"/></svg>
+                            </button>
+                            <button class="gd-btn" data-act="svg" data-i="${i}" title="${t.gd_svg}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14"/></svg>
+                            </button>
+                            ${col.type === 'mesh' ? '' : `<button class="gd-btn" data-act="rotate" data-i="${i}" title="${t.gd_rotate}">`}
+                                ${col.type === 'mesh' ? '' : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16" transform="rotate(45 12 12)"/><path d="M17 7l3 3-3 3" transform="rotate(45 12 12)"/></svg>
+                            </button>`}
+                            <button class="gd-btn ${col.locked ? 'is-on' : ''}" data-act="lock" data-i="${i}" title="${t.lock_hint}">
+                                ${col.locked
+                                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>'
+                                    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 017-2.5"/></svg>'}
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            const cnt = document.getElementById('gdCount');
+            if (cnt) cnt.textContent = gdN + ' ' + t.gd_cols;
+        }
+
+        // ---- hadisələr ----
+        (function bindGradPalette() {
+            const view = document.getElementById('gradient-view');
+            if (!view) return;
+            const box = document.getElementById('gradContainer');
+            const spaceBox = document.getElementById('gdSpace');
+            const typeBox = document.getElementById('gdType');
+
+            function paintTabs() {
+                const t = translations[currentLang];
+                spaceBox.innerHTML = [['oklch', 'OKLCH'], ['srgb', 'sRGB'], ['hsl', 'HSL']]
+                    .map(([k, l]) => `<button class="ads-tab ${gdSpace === k ? 'is-on' : ''}" data-k="${k}">${l}</button>`).join('');
+                typeBox.innerHTML = [['linear', t.grad_linear], ['radial', t.grad_radial], ['mesh', t.grad_mesh]]
+                    .map(([k, l]) => `<button class="ads-tab ${gdType === k ? 'is-on' : ''}" data-k="${k}">${l}</button>`).join('');
+            }
+            window.gdPaintTabs = paintTabs;
+
+            spaceBox.addEventListener('click', e => {
+                const b = e.target.closest('.ads-tab'); if (!b) return;
+                gdSpace = b.dataset.k; paintTabs(); gdRender();
+            });
+            typeBox.addEventListener('click', e => {
+                const b = e.target.closest('.ads-tab'); if (!b) return;
+                gdType = b.dataset.k;
+                paintTabs();
+                gdRegenerate(true);
+            });
+
+            document.getElementById('gdNext').addEventListener('click', () => gdRegenerate(false));
+            document.getElementById('gdCount').addEventListener('click', () => {
+                const i = GD_COUNT.indexOf(gdN);
+                gdN = GD_COUNT[(i + 1) % GD_COUNT.length];
+                gdRegenerate(false);
+            });
+
+            box.addEventListener('click', e => {
+                const chip = e.target.closest('.gd-chip');
+                if (chip) {
+                    e.stopPropagation();
+                    const hx = chip.dataset.hex;
+                    writeClipboard(hx).then(ok => {
+                        chip.classList.toggle('is-copied', ok);
+                        setTimeout(() => chip.classList.remove('is-copied'), 1200);
+                        if (ok) toastMsg(`<span class="font-bold">${hx}</span> — ${translations[currentLang].copied}`);
+                    });
+                    return;
+                }
+                const b = e.target.closest('.gd-btn');
+                if (b) {
+                    e.stopPropagation();
+                    const i = +b.dataset.i, col = gdCols[i];
+                    const t = translations[currentLang];
+                    if (b.dataset.act === 'copy') {
+                        const css = `background-image: ${gdCss(col)};`;
+                        writeClipboard(css).then(ok => { flashBtn(b, ok); if (ok) toastMsg(t.gd_copied); });
+                    } else if (b.dataset.act === 'shuffle') {
+                        const fresh = gdType === 'mesh' ? gdMakeMesh() : gdMake();
+                        gdCols[i] = Object.assign(fresh, { locked: col.locked, type: gdType });
+                        gdRender();
+                    } else if (b.dataset.act === 'svg') {
+                        gdDownload(i);
+                        flashBtn(b, true);
+                        toastMsg(t.gd_svg_done);
+                    } else if (b.dataset.act === 'rotate') {
+                        col.angle = (col.angle + 45) % 360;
+                        gdRender();
+                    } else if (b.dataset.act === 'lock') {
+                        col.locked = !col.locked;
+                        gdRender();
+                    }
+                    return;
+                }
+                // sütuna klik → CSS kopyalanır
+                const col = e.target.closest('.gd-col');
+                if (col) {
+                    const css = `background-image: ${gdCss(gdCols[+col.dataset.i])};`;
+                    writeClipboard(css).then(ok => { if (ok) toastMsg(translations[currentLang].gd_copied); });
+                }
+            });
+
+            // Space → yeni qradientlər
+            document.addEventListener('keydown', e => {
+                if (view.classList.contains('hidden')) return;
+                const tag = (e.target.tagName || '').toLowerCase();
+                if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
+                if (e.code === 'Space' || e.key === ' ') { e.preventDefault(); gdRegenerate(false); }
+            });
+        })();
+
+        // ---- Kitabxana pəncərəsi ----
+        let gdLibCat = 'all';
+        let gdLibQ = '';
+
+        function gdLibRender() {
+            const grid = document.getElementById('gdLibGrid');
+            const cats = document.getElementById('gdLibCats');
+            const cnt = document.getElementById('gdLibCount');
+            if (!grid) return;
+            const t = translations[currentLang];
+
+            cats.innerHTML = [['all', t.presets_all]].concat(GD_CATS.map(c => [c, t['gd_cat_' + c] || c]))
+                .map(([k, label]) => {
+                    const n = k === 'all' ? GD_LIB.length : GD_LIB.filter(p => p.cat === k).length;
+                    return `<button class="preset-chip ${gdLibCat === k ? 'is-on' : ''}" data-cat="${k}">${label} <em>${n}</em></button>`;
+                }).join('');
+
+            const q = gdLibQ.trim().toLowerCase();
+            const list = GD_LIB.filter(p =>
+                (gdLibCat === 'all' || p.cat === gdLibCat) &&
+                (!q || p.n.toLowerCase().includes(q)));
+
+            cnt.textContent = list.length + ' / ' + GD_LIB.length;
+            grid.innerHTML = list.length ? list.map(p => {
+                const col = gdLibCol(p);
+                const cnt2 = p.b ? p.b.length : p.s.length;
+                return `<button class="gd-lib-item" data-n="${esc(p.n)}">
+                    <span class="gd-lib-bar" style="background-image:${gdCss(col)}"></span>
+                    <span class="gd-lib-meta"><b>${esc(p.n)}</b><em>${cnt2} ${t.gd_stops_short}</em></span>
+                </button>`;
+            }).join('') : `<p class="gd-lib-empty">${t.presets_none}</p>`;
+        }
+
+        (function bindGdLib() {
+            const modal = document.getElementById('gdLibModal');
+            if (!modal) return;
+            const btn = document.getElementById('gdLibBtn');
+
+            btn.addEventListener('click', () => { gdLibRender(); modal.classList.remove('is-hidden'); });
+            document.getElementById('gdLibClose').addEventListener('click', () => modal.classList.add('is-hidden'));
+            modal.addEventListener('click', e => { if (e.target === modal) modal.classList.add('is-hidden'); });
+
+            document.getElementById('gdLibSearch').addEventListener('input', e => {
+                gdLibQ = e.target.value; gdLibRender();
+            });
+            document.getElementById('gdLibCats').addEventListener('click', e => {
+                const c = e.target.closest('.preset-chip'); if (!c) return;
+                gdLibCat = c.dataset.cat; gdLibRender();
+            });
+
+            // nümunəyə klik → boş (kilidlənməmiş) sətrə qoyulur
+            document.getElementById('gdLibGrid').addEventListener('click', e => {
+                const it = e.target.closest('.gd-lib-item'); if (!it) return;
+                const p = GD_LIB.find(x => x.n === it.dataset.n);
+                if (!p) return;
+                let slot = gdCols.findIndex(c => !c.locked);
+                if (slot < 0) slot = 0;
+                gdCols[slot] = Object.assign(gdLibCol(p, gdType), { locked: true });
+                gdRender();
+                modal.classList.add('is-hidden');
+                toastMsg(`<span class="font-bold">${esc(p.n)}</span> — ${translations[currentLang].gd_lib_added}`);
+            });
+        })();
+
+
+        function gdInit() {
+            if (typeof gdPaintTabs === 'function') gdPaintTabs();
+            if (!gdReady) { gdCols = []; gdRegenerate(true); gdReady = true; }
+            else gdRender();
+        }
+
 
         function renderFooters() {
             const html = siteFooterHTML();
@@ -9127,7 +10271,7 @@ ul,ol{margin:0;padding:0;list-style:none}
   </g>
 
   <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="${(fs * 0.85).toFixed(2)}" fill="#cbd5e1" letter-spacing="${(fs * 0.2).toFixed(2)}">
-    <text x="${pad}" y="${H - pad + fs}" >RASIONAL DIZAYN MƏRKƏZİ</text>
+    <text x="${pad}" y="${H - pad + fs}" >SEENLY.DESIGN</text>
   </g>
 </svg>`;
 
@@ -9948,7 +11092,7 @@ ul,ol{margin:0;padding:0;list-style:none}
             return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
 <rect width="${W}" height="${H}" fill="#ffffff"/>
 <text x="${PAD}" y="72" font-family="${sans}" font-size="34" font-weight="900" fill="#0f172a">${esc(name)}</text>
-<text x="${PAD}" y="98" font-family="${sans}" font-size="13" font-weight="600" fill="#94a3b8">${hexes.length} ${esc(t.presets_count)} · ${new Date().toISOString().slice(0, 10)} · Rasional Dizayn Mərkəzi</text>
+<text x="${PAD}" y="98" font-family="${sans}" font-size="13" font-weight="600" fill="#94a3b8">${hexes.length} ${esc(t.presets_count)} · ${new Date().toISOString().slice(0, 10)} · seenly.design</text>
 ${strip}
 <rect x="${PAD}" y="120" width="${W - PAD * 2}" height="42" fill="none" stroke="#e2e8f0"/>
 ${rows}
@@ -10123,6 +11267,7 @@ ${rows}
         renderSavedColors();
         renderFooters();
         updateStaticTexts();
+        setupHeroTyping(true);
         pibTips();
         // --- Tünd rejim ---
         function applyTheme(mode) {
@@ -10133,7 +11278,7 @@ ${rows}
             const onColor = cv && !cv.classList.contains('hidden');
             document.documentElement.setAttribute('data-theme', onColor ? 'light' : mode);
             const meta = document.querySelector('meta[name="theme-color"]');
-            if (meta) meta.setAttribute('content', mode === 'dark' ? '#0d0d0f' : '#ffffff');
+            if (meta) meta.setAttribute('content', mode === 'dark' ? '#0d0d0f' : '#00C5DB');
             try { store.theme = mode; storeSave(); } catch (e) {}
             if (typeof mountThemeButtons === 'function') mountThemeButtons();
         }
@@ -10170,7 +11315,7 @@ ${rows}
             pendingSharedPalette = true;
             setTimeout(() => { try { switchView('color-hierarchy'); } catch (e) {} }, 260);
         })();
-        applyTheme(store.theme === 'dark' ? 'dark' : 'light');
+        applyTheme(store.theme === 'light' ? 'light' : 'dark');
         bindModal('presetModal', 'presetsBtn', 'presetCloseBtn', () => { presetShown = 60; renderPresets(); });
         (function bindProfileClose() {
             const m = document.getElementById('profileModal');
